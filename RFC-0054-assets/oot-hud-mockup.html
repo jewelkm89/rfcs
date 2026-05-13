@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyTorch CI HUD — With OOT Integration (Mockup)</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CSS Variables — verbatim from torchci/styles/globals.css
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --background-color: #ffffff;
+  --text-color: #212529;
+  --link-color: #0064cf;
+  --navbar-bg: linear-gradient(326deg, rgba(255,246,246,0.5), rgba(255,247,236,0.5));
+  --navbar-shadow: 0 -4px 20px 0px #c2c2c2;
+  --dropdown-bg: white;
+  --code-bg: aliceblue;
+  --icon-color: black;
+  --dropdown-shadow: 0 -4px 20px 0px #c2c2c2;
+  --button-color: #212529;
+  --button-bg: transparent;
+  --border-color: #e1e1e1;
+  --table-border-color: #e1e1e1;
+  --forced-merge-bg: lightyellow;
+  --forced-merge-failure-bg: #ffe0b3;
+  --autoreverted-bg: #e8e8e8;
+  --selected-row-bg: lightblue;
+  --highlight-bg: #ffa;
+  --commit-message-bg: whitesmoke;
+  --button-hover-bg: lightgrey;
+  --table-row-odd-bg: #f5f5f5;
+  --table-row-even-bg: rgba(125,125,125,0.1);
+  --workflow-box-none-bg: lightgray;
+  --workflow-box-fail-bg: mistyrose;
+  --workflow-box-pending-bg: azure;
+  --workflow-box-success-bg: #efffef;
+  --color-success: #4caf50;
+  --color-failure: #f44336;
+  --color-grey: #9e9e9e;
+  --color-light-grey: #bdbdbd;
+  --color-warning: #ff9800;
+  --color-pending: #ffc107;
+  --color-flaky: #8bc34a;
+  --color-classified: lightpink;
+  --tooltip-bg: #e0e0e0;
+  --tooltip-pinned-bg: #add8e6;
+  --tooltip-text: #212529;
+  --sev-banner-bg: #ffe1e1;
+  --warning-button-bg: #ffc107;
+  --info-button-bg: #17a2b8;
+  --info-button-text: white;
+}
+.dark-mode {
+  --background-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --link-color: #4a90e2;
+  --navbar-bg: linear-gradient(326deg, rgba(42,42,42,0.8), rgba(45,45,45,0.8));
+  --navbar-shadow: 0 -4px 20px 0px rgba(0,0,0,0.4);
+  --dropdown-bg: #2a2a2a;
+  --code-bg: #2a2a2a;
+  --icon-color: #e0e0e0;
+  --dropdown-shadow: 0 -4px 20px 0px rgba(0,0,0,0.3);
+  --button-color: #e0e0e0;
+  --button-bg: transparent;
+  --border-color: #3a3a3a;
+  --table-border-color: rgba(255,255,255,0.3);
+  --table-row-odd-bg: #2a2a2a;
+  --table-row-even-bg: rgba(125,125,125,0.1);
+  --workflow-box-none-bg: #383838;
+  --workflow-box-fail-bg: #4b2c2c;
+  --workflow-box-pending-bg: #0c232d;
+  --workflow-box-success-bg: #0d3010;
+  --tooltip-bg: #3a3a3a;
+  --tooltip-pinned-bg: #1e4555;
+  --tooltip-text: #e0e0e0;
+  --sev-banner-bg: #4b2c2c;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Base — from globals.css
+   ═══════════════════════════════════════════════════════════════════════ */
+html {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+h1 { margin: 0; }
+body {
+  margin: 0; padding: 5px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+a { text-decoration: none; color: var(--link-color); }
+* { box-sizing: border-box; }
+pre, code { background-color: var(--code-bg); }
+table a, td a { color: var(--link-color); }
+button {
+  cursor: pointer; display: inline-block; font-weight: 400;
+  color: var(--button-color); text-align: center; vertical-align: middle;
+  user-select: none; border: 1px solid transparent; border-radius: 0.25rem;
+  background-color: var(--button-bg);
+}
+input, select {
+  background-color: var(--dropdown-bg); color: var(--text-color);
+  border: 1px solid var(--border-color); border-radius: 0.25rem;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+select option { background-color: var(--dropdown-bg); color: var(--text-color); }
+table { border-collapse: collapse; border-color: var(--border-color); color: var(--text-color); background-color: var(--dropdown-bg); }
+th, td { border-color: var(--border-color); padding: 1px 3px; }
+hr { border-color: var(--border-color); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   NavBar — from NavBar.module.css
+   ═══════════════════════════════════════════════════════════════════════ */
+.navbar {
+  display: flex; padding: 0 clamp(0.5rem, 1vw, 1rem);
+  background: var(--navbar-bg); box-shadow: var(--navbar-shadow);
+  width: 100%; min-height: 60px; align-items: center;
+  position: relative; z-index: 1300;
+  backdrop-filter: blur(1px); -webkit-backdrop-filter: blur(1px);
+  flex-wrap: wrap; gap: clamp(0.5rem, 2vw, 1.5rem);
+  font-size: clamp(14px, 1vw, 16px);
+}
+.navbar li {
+  padding: clamp(0.5rem, 0.8vw, 0.7rem) clamp(0.6rem, 1vw, 0.8rem);
+  position: relative; display: flex; align-items: center;
+}
+.navbar ul { list-style: none; margin: 0; padding: 0; }
+.navbarlinkslist { display: flex; align-items: center; flex-wrap: wrap; margin: 0; padding: 0; height: 100%; }
+.homeLink { font-weight: bold; padding-right: 10px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; }
+.dropdown-trigger { position: relative; cursor: pointer; }
+.dropdown-menu {
+  position: absolute; top: 100%; left: 0; box-shadow: var(--dropdown-shadow);
+  z-index: 9999; min-width: 12rem; padding: 0.5rem 0;
+  background-color: var(--dropdown-bg); display: none; border-radius: 4px;
+}
+.dropdown-trigger:hover .dropdown-menu { display: block; }
+.dropdown-menu a { display: block; padding: 0.35rem 0.8rem; font-size: 13px; color: var(--text-color); white-space: nowrap; }
+.dropdown-menu a:hover { background: rgba(0,0,0,0.05); }
+.dark-mode .dropdown-menu a:hover { background: rgba(255,255,255,0.05); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HUD Table — from hud.module.css
+   ═══════════════════════════════════════════════════════════════════════ */
+.hudTable { table-layout: fixed; border-collapse: collapse; width: max-content; line-height: 1; }
+.colTime { width: 14ch; }
+.colSha { width: 8ch; }
+.colCommit { width: 40ch; }
+.colPr { width: 8ch; }
+.colAuthor { width: 12ch; }
+.colJob { width: 2ch; min-width: 14px; }
+.jobHeader { font-family: sans-serif; height: 150px; white-space: nowrap; padding-right: 4px; }
+.jobHeaderName { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: 400; font-size: 0.8em; }
+.jobHeaderNameBold { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: bold; font-size: 0.8em; }
+.regularHeader { vertical-align: bottom; font-weight: 600; font-size: 0.85em; padding: 4px 6px; }
+.jobMetadata a { text-decoration: none; color: var(--link-color); }
+.jobMetadataTruncated {
+  vertical-align: top; width: auto; height: 20px; min-width: 0; max-width: 37ch;
+  display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border-radius: 2px; padding: 0 2px;
+}
+.jobMetadataTruncatedAuthor {
+  vertical-align: top; width: auto; height: 20px; min-width: 0; max-width: 12ch;
+  display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border-radius: 2px; padding: 0 2px;
+}
+td.jobMetadata { vertical-align: top; padding: 2px 4px; white-space: nowrap; font-size: 0.85em; }
+td.jobCell { text-align: center; padding: 2px; }
+.center { text-align: center; }
+.highlight { background-color: var(--highlight-bg); }
+.forcedMerge { background-color: var(--forced-merge-bg); }
+.forcedMergeWithFailure { background-color: var(--forced-merge-failure-bg); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   JobConclusion — from JobConclusion.module.css + getConclusionChar
+   O=success, X=failure, ?=pending, ~=none, C=cancelled, S=skipped,
+   F=flaky (success after previous failure), Q=queued, N=neutral
+   ═══════════════════════════════════════════════════════════════════════ */
+.conclusion { font-family: monospace; font-size: 1rem; font-weight: bold; display: inline-block; width: 14px; text-align: center; }
+.c-success { color: var(--color-success); }
+.c-failure { color: var(--color-failure); }
+.c-pending { color: var(--color-pending); }
+.c-cancelled { color: var(--color-failure); }
+.c-skipped { color: var(--color-grey); }
+.c-flaky { color: var(--color-flaky); }
+.c-warning { color: var(--color-warning); }
+.c-none { color: var(--color-light-grey); }
+.c-queued { color: var(--color-light-grey); }
+.c-classified { color: var(--color-classified); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HUD Controls Row — from hud.module.css
+   ═══════════════════════════════════════════════════════════════════════ */
+.hudControlsRow { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; width: 100%; }
+.settingsButton {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: none; border: 1px solid var(--border-color); border-radius: 3px;
+  padding: 0.25rem 0.5rem; cursor: pointer; color: var(--text-color);
+}
+.branchFormInput {
+  font-weight: bold; font-family: monospace; background-color: var(--code-bg);
+  font-size: 1em; border: 0px; padding: 0px; padding-left: 4px; color: var(--text-color);
+}
+
+/* Tooltip — lightweight version */
+.has-tooltip { position: relative; }
+.has-tooltip .tt {
+  display: none; position: absolute; z-index: 1000; bottom: calc(100% + 6px);
+  left: 50%; transform: translateX(-50%); background: var(--tooltip-bg);
+  color: var(--tooltip-text); padding: 6px 10px; border-radius: 4px;
+  font-size: 12px; white-space: pre-line; pointer-events: none;
+  min-width: 200px; max-width: 350px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-family: -apple-system, sans-serif; font-weight: normal;
+}
+.has-tooltip:hover .tt { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   OOT-specific MUI-like styles
+   From pages/oot/index.tsx, oot/[org]/[repo].tsx, OotPrSection.tsx
+   ═══════════════════════════════════════════════════════════════════════ */
+.oot-page { padding: 24px; max-width: 1600px; margin: 0 auto; }
+.oot-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.oot-page-header h2 { font-size: 2.125rem; font-weight: 400; letter-spacing: 0.00735em; margin: 0; }
+.subtitle { color: #888; font-size: 0.875rem; margin-bottom: 16px; }
+
+.mui-select-wrapper { position: relative; min-width: 140px; }
+.mui-select-wrapper label {
+  position: absolute; top: -8px; left: 12px; font-size: 11px;
+  background: var(--dropdown-bg); padding: 0 4px; color: #888;
+}
+.mui-select-wrapper select { width: 100%; padding: 8px 12px; font-size: 14px; }
+
+.chip {
+  display: inline-block; padding: 3px 10px; border-radius: 16px;
+  font-size: 0.8125rem; font-weight: 500; line-height: 1.4; text-align: center; cursor: default;
+}
+.chip-success { background: #e8f5e9; color: #2e7d32; }
+.chip-error   { background: #ffebee; color: #c62828; }
+.chip-warning { background: #fff3e0; color: #e65100; }
+.chip-info    { background: #e3f2fd; color: #1565c0; }
+.chip-default { background: #f5f5f5; color: #616161; }
+.dark-mode .chip-success { background: #1b5e20; color: #a5d6a7; }
+.dark-mode .chip-error   { background: #b71c1c; color: #ef9a9a; }
+.dark-mode .chip-warning { background: #e65100; color: #ffcc80; }
+.dark-mode .chip-info    { background: #0d47a1; color: #90caf9; }
+.dark-mode .chip-default { background: #424242; color: #bdbdbd; }
+
+.paper {
+  border-radius: 4px; overflow: hidden;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+  background: var(--dropdown-bg);
+}
+.dark-mode .paper { box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.5), 0px 2px 2px 0px rgba(0,0,0,0.4), 0px 1px 5px 0px rgba(0,0,0,0.3); }
+
+.oot-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.oot-table th { text-align: left; padding: 8px 16px; font-weight: 600; border-bottom: 2px solid var(--border-color); font-size: 0.875rem; color: var(--text-color); }
+.oot-table th.r, .oot-table td.r { text-align: right; }
+.oot-table th.c, .oot-table td.c { text-align: center; }
+.oot-table td { padding: 6px 16px; border-bottom: 1px solid var(--border-color); }
+.oot-table tbody tr:hover { background: rgba(0,0,0,0.04); }
+.dark-mode .oot-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+.accordion { border: 1px solid var(--border-color); border-radius: 4px; margin-top: 16px; overflow: hidden; }
+.accordion-header {
+  display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+  cursor: pointer; background: var(--dropdown-bg); user-select: none; font-size: 14px;
+}
+.accordion-header:hover { background: rgba(0,0,0,0.02); }
+.dark-mode .accordion-header:hover { background: rgba(255,255,255,0.02); }
+.accordion-header .expand-icon { transition: transform 0.2s; font-size: 18px; color: #888; }
+.accordion-header.open .expand-icon { transform: rotate(180deg); }
+.accordion-body { padding: 8px 16px 16px; }
+
+.stack-row { display: flex; align-items: center; gap: 8px; }
+.mono { font-family: "SF Mono", "Fira Code", Consolas, monospace; font-size: 0.8125rem; }
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+.view { display: none; }
+.view.active { display: block; }
+.theme-picker {
+  background: none; border: 1px solid var(--border-color); border-radius: 4px;
+  padding: 4px 10px; cursor: pointer; color: var(--text-color); font-size: 14px;
+}
+
+/* NEW badge for OOT nav link */
+.new-badge {
+  margin-left: 4px; padding: 1px 5px; font-size: 9px; font-weight: bold;
+  background-color: #ff6b35; color: white; border-radius: 8px;
+  text-transform: uppercase; line-height: 1; vertical-align: super;
+}
+
+/* Visual separator between existing HUD and our additions */
+.oot-addition-marker {
+  border: 2px dashed #ff6b35; border-radius: 6px; padding: 2px;
+  position: relative;
+}
+.oot-addition-marker::before {
+  content: "NEW — OOT Addition"; position: absolute; top: -10px; left: 12px;
+  background: #ff6b35; color: white; font-size: 10px; font-weight: bold;
+  padding: 1px 8px; border-radius: 4px; letter-spacing: 0.05em;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     NavBar — from components/layout/NavBar.tsx
+     OOT addition: "OOT" link with NEW badge added to left nav group
+     ═══════════════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <div>
+    <ul class="navbarlinkslist">
+      <li class="homeLink"><a href="#" onclick="showView('hud'); return false;">PyTorch CI HUD</a></li>
+      <li><a href="#" onclick="showView('hud'); return false;">PyTorch</a></li>
+      <li><a href="#">ExecuTorch</a></li>
+      <li><a href="#">TorchVision</a></li>
+      <li><a href="#">TorchAudio</a></li>
+      <li><a href="#">Helion</a></li>
+      <!-- ★ OOT addition to NavBar ★ -->
+      <li class="oot-addition-marker" style="border-width: 1px; padding: 0.5rem 0.8rem;">
+        <a href="#" onclick="showView('oot-summary'); return false;">OOT<span class="new-badge">NEW</span></a>
+      </li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <ul class="navbarlinkslist">
+      <li><a href="https://github.com/pytorch/pytorch/wiki/Using-hud.pytorch.org">Help</a></li>
+      <li><a href="#">Requests</a></li>
+      <li><a href="#">KPIs</a></li>
+      <li class="dropdown-trigger">
+        <span>Benchmarks ▾</span>
+        <div class="dropdown-menu"><a href="#">TorchBench</a><a href="#">Inductor Perf</a></div>
+      </li>
+      <li class="dropdown-trigger">
+        <span>Metrics ▾</span>
+        <div class="dropdown-menu">
+          <a href="#">Metrics</a>
+          <a href="#">Flambeau (PyTorch CI Agent) <span class="new-badge" style="font-size: 8px;">BETA</span></a>
+          <a href="#">vLLM CI metrics</a>
+          <a href="#">Autorevert Metrics</a>
+          <a href="#">Claude Billing</a>
+        </div>
+      </li>
+      <li class="dropdown-trigger">
+        <span>Dev Infra ▾</span>
+        <div class="dropdown-menu">
+          <a href="#">TTS</a><a href="#">Queue Time Analysis</a>
+          <a href="#">Nightly Dashboard</a><a href="#">Disabled Tests</a>
+          <a href="#">Cost Analysis</a><a href="#">PyTorch Runners</a>
+          <a href="#">Test File Reports</a>
+        </div>
+      </li>
+      <li>
+        <a href="https://github.com/pytorch/test-infra/tree/main/torchci" style="color: var(--icon-color); display: flex; align-items: center;">
+          <svg viewBox="0 0 1024 1024" width="18" height="18" fill="currentColor"><path d="M511.6 76.3C264.3 76.2 64 276.4 64 523.5 64 718.9 189.3 885 363.8 946c23.5 5.9 19.9-10.8 19.9-22.2v-77.5c-135.7 15.9-141.2-73.9-150.3-88.9C215 726 171.5 718 184.5 703c30.9-15.9 62.4 4 98.9 57.9 26.4 39.1 77.9 32.5 104 26 5.7-23.5 17.9-44.5 34.7-60.8-140.6-25.2-199.2-111-199.2-213 0-49.5 16.3-95 48.3-131.7-20.4-60.5 1.9-112.3 4.9-120 58.1-5.2 118.5 41.6 123.2 45.3 33-8.9 70.7-13.6 112.9-13.6 42.4 0 80.2 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.3-43.9 2.9 7.7 24.7 58.3 5.5 118 32.4 36.8 48.9 82.7 48.9 132.3 0 102.2-59 188.1-200 212.9a127.5 127.5 0 0 1 38.1 91v112.5c.8 9 0 17.9 15 17.9 177.1-59.7 304.6-227 304.6-424.1 0-247.2-200.4-447.3-447.5-447.3z"/></svg>
+        </a>
+      </li>
+      <li><button class="theme-picker" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18V4c4.41 0 8 3.59 8 8s-3.59 8-8 8z"/></svg>
+      </button></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VIEW 1: EXISTING HUD HOMEPAGE — /hud/pytorch/pytorch/main
+     From pages/hud/[repoOwner]/[repoName]/[branch]/[[...page]].tsx
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="view-hud" class="view active">
+  <div style="padding: 5px;">
+
+    <!-- HudHeader — ParamSelector for repo:branch -->
+    <div style="display: flex; align-items: flex-end;">
+      <h1>
+        <span class="branchFormInput">pytorch/pytorch</span>
+        :
+        <span class="branchFormInput">main</span>
+      </h1>
+      <span style="margin-left: 10px; font-size: 12px; cursor: pointer; color: var(--link-color);">Copy link</span>
+    </div>
+
+    <!-- FiltersAndSettings — JobFilterInput + SettingsPanel -->
+    <div class="hudControlsRow">
+      <form style="display: inline;" onsubmit="return false;">
+        <input type="text" placeholder="Filter job name" style="padding: 4px 8px; font-size: 13px; width: 200px;" value="">
+      </form>
+      <button class="settingsButton">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+        Settings
+      </button>
+    </div>
+
+    <!-- GroupedHudTable — the main commit/job matrix -->
+    <div style="overflow-x: auto;">
+      <table class="hudTable">
+        <!-- GroupHudTableColumns -->
+        <colgroup>
+          <col class="colTime"><col class="colSha"><col class="colCommit">
+          <col class="colPr"><col class="colAuthor">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+        </colgroup>
+        <!-- GroupHudTableHeader — Time, SHA, Commit, PR, Author + rotated job names -->
+        <thead>
+          <tr>
+            <th class="regularHeader">Time</th>
+            <th class="regularHeader">SHA</th>
+            <th class="regularHeader">Commit</th>
+            <th class="regularHeader">PR</th>
+            <th class="regularHeader">Author</th>
+            <!-- Group headers (bold) -->
+            <th class="jobHeader"><div class="jobHeaderNameBold">linux ▸</div></th>
+            <th class="jobHeader"><div class="jobHeaderNameBold">win ▸</div></th>
+            <th class="jobHeader"><div class="jobHeaderNameBold">mac ▸</div></th>
+            <th class="jobHeader"><div class="jobHeaderNameBold">inductor ▸</div></th>
+            <!-- Individual job headers -->
+            <th class="jobHeader"><div class="jobHeaderName">Lint</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-jammy-py3.8-gcc11 / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-jammy-py3.8-gcc11 / test</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-focal-cuda12.1 / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-focal-cuda12.1 / test</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-focal-cuda12.4 / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-focal-cuda12.4 / test</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-focal-rocm6.2 / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / win-vs2019-cpu / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / win-vs2019-cpu / test</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / macos-py3-arm64 / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">inductor / A100 / test</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / manylinux / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">pull / linux-jammy-py3.12 / build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">trunk / linux-focal-py3.11 / test</div></th>
+          </tr>
+        </thead>
+        <!-- HudTableBody → HudRow → JobCell → JobConclusion -->
+        <tbody>
+          <!-- Commit row 1 -->
+          <tr>
+            <td class="jobMetadata">3 min ago</td>
+            <td class="jobMetadata"><a href="#">a1b2c3d</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Improve conv2d backward pass performance</a></div></td>
+            <td class="jobMetadata"><a href="#">#183512</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">contributor42</a></div></td>
+            <!-- group cells -->
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">linux: 8/8 passed</div></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">win: 1/2 complete</div></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">mac: 0/1 complete</div></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">inductor: running</div></td>
+            <!-- individual cells -->
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">pull / linux-focal-cuda12.1 / test
+<b>FAIL</b> test_sparse (SparseTestCUDA)
+Duration: 45m 12s</div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-none">~</span></td>
+          </tr>
+          <!-- Commit row 2 -->
+          <tr>
+            <td class="jobMetadata">18 min ago</td>
+            <td class="jobMetadata"><a href="#">e4f5a6b</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Fix memory leak in autograd engine</a></div></td>
+            <td class="jobMetadata"><a href="#">#183498</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">pytorchbot</a></div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <!-- Commit row 3 — forced merge -->
+          <tr>
+            <td class="jobMetadata">42 min ago</td>
+            <td class="jobMetadata"><a href="#">c7d8e9f</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[dynamo] Add support for torch.vmap</a></div></td>
+            <td class="jobMetadata"><a href="#"><mark class="forcedMerge">#183475</mark></a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">dynamodev</a></div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-flaky">F</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <!-- Commit row 4 -->
+          <tr>
+            <td class="jobMetadata">1 hr ago</td>
+            <td class="jobMetadata"><a href="#">f0a1b2c</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Refactor inductor scheduler pass</a></div></td>
+            <td class="jobMetadata"><a href="#">#183460</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">inductor_fan</a></div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <!-- Commit row 5 -->
+          <tr>
+            <td class="jobMetadata">1 hr ago</td>
+            <td class="jobMetadata"><a href="#">d3e4f5a</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Update FBGEMM to latest nightly</a></div></td>
+            <td class="jobMetadata"><a href="#">#183441</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">fbgemmbot</a></div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <!-- Commit row 6 — forced merge with failures -->
+          <tr>
+            <td class="jobMetadata">2 hr ago</td>
+            <td class="jobMetadata"><a href="#">b6c7d8e</a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Enable flex attention for inference</a></div></td>
+            <td class="jobMetadata"><a href="#"><mark class="forcedMergeWithFailure">#183420</mark></a></td>
+            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">attndev</a></div></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PageSelector — from components/common/PageSelector.tsx -->
+    <div style="margin-top: 8px;">
+      Page 1: Prev | <a href="#">Next</a>
+    </div>
+    <br>
+    <div><em>This page automatically updates.</em></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VIEW 2: EXISTING PR PAGE + OOT ADDITION
+     From pages/[repoOwner]/[repoName]/pull/[prNumber].tsx
+     OOT addition: OotPrSection accordion at the bottom
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="view-pr" class="view">
+  <div style="padding: 12px;">
+
+    <!-- PR header — from pull/[prNumber].tsx -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <h1 style="font-size: 1.5rem; font-weight: 400;">
+        Improve conv2d backward pass performance
+        <code style="font-size: 0.85em;"><a href="#">#183512</a></code>
+      </h1>
+      <span class="chip chip-info" style="cursor: pointer;">Dr. CI</span>
+    </div>
+
+    <!-- CommitHeader — commit selector dropdown -->
+    <div style="margin: 12px 0 20px;">
+      Commit:
+      <select style="padding: 4px 8px; font-size: 13px;">
+        <option>Improve conv2d backward pass performance (a1b2c3)</option>
+        <option>Fix edge case in transposed conv (e4f5a6)</option>
+      </select>
+    </div>
+
+    <!-- CommitInfo — existing in-tree CI results -->
+    <div style="margin-bottom: 8px;">
+      <h3 style="font-weight: 500; font-size: 1rem; margin-bottom: 8px;">Commit CI Status</h3>
+      <div style="display: flex; gap: 4px; flex-wrap: wrap; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">Lint — success (1m 12s)</div></span>
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-jammy-py3.8-gcc11 / build — success (8m 32s)</div></span>
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-jammy-py3.8-gcc11 / test — success (22m 14s)</div></span>
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-focal-cuda12.1 / build — success (12m 3s)</div></span>
+        <span class="conclusion c-failure has-tooltip" style="cursor:pointer;">X<div class="tt">pull / linux-focal-cuda12.1 / test — failure
+FAIL test_sparse (SparseTestCUDA)
+Duration: 45m 12s</div></span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-pending">?</span>
+        <span class="conclusion c-pending">?</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-pending">?</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-success">O</span>
+        <span class="conclusion c-none">~</span>
+      </div>
+    </div>
+
+    <!-- ★ OOT ADDITION: OotPrSection — from components/oot/OotPrSection.tsx ★ -->
+    <div class="oot-addition-marker">
+      <div class="accordion" style="margin-top: 14px;">
+        <div class="accordion-header open" onclick="toggleAccordion(this)">
+          <span class="expand-icon">▾</span>
+          <div class="stack-row">
+            <strong>Out-of-Tree Backends</strong>
+            <span style="font-size: 0.875rem; color: #888;">(3/5 passed, 1 running)</span>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <table class="oot-table">
+            <thead>
+              <tr>
+                <th>Backend</th>
+                <th>Job</th>
+                <th class="c">Status</th>
+                <th class="r">Duration</th>
+                <th>Links</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>&lt;company-a&gt;/&lt;hardware-a&gt;-ops</td>
+                <td>test-float32</td>
+                <td class="c"><span class="chip chip-success">success</span></td>
+                <td class="r">18m 32s</td>
+                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+              </tr>
+              <tr>
+                <td>&lt;company-a&gt;/&lt;hardware-a&gt;-ops</td>
+                <td>test-float16</td>
+                <td class="c"><span class="chip chip-error">failure</span></td>
+                <td class="r">12m 5s</td>
+                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+              </tr>
+              <tr>
+                <td>&lt;company-b&gt;/pytorch-&lt;hardware-b&gt;</td>
+                <td>test-default</td>
+                <td class="c"><span class="chip chip-success">success</span></td>
+                <td class="r">22m 14s</td>
+                <td><a href="#">Run</a></td>
+              </tr>
+              <tr>
+                <td>&lt;company-c&gt;/torch-&lt;hardware-c&gt;</td>
+                <td>test-full</td>
+                <td class="c"><span class="chip chip-info">running</span></td>
+                <td class="r">–</td>
+                <td><a href="#">Run</a></td>
+              </tr>
+              <tr>
+                <td>&lt;company-d&gt;/pytorch-&lt;hardware-d&gt;-backend</td>
+                <td>test-core</td>
+                <td class="c"><span class="chip chip-success">success</span></td>
+                <td class="r">9m 48s</td>
+                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VIEW 3: OOT SUMMARY — NEW PAGE from pages/oot/index.tsx
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="view-oot-summary" class="view">
+  <div class="oot-page">
+    <div class="oot-page-header">
+      <h2>Out-of-Tree CI Summary</h2>
+      <div class="mui-select-wrapper">
+        <label>Time Range</label>
+        <select><option value="1">Last 24h</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option></select>
+      </div>
+    </div>
+    <p class="subtitle">Cross-repo CI health overview. Repos sorted by pass rate (worst first). Click a row to see the per-backend dashboard.</p>
+    <div class="paper">
+      <table class="oot-table">
+        <thead>
+          <tr>
+            <th>Backend Repository</th>
+            <th class="c">Level</th>
+            <th class="r">Pass Rate</th>
+            <th class="r">Success</th>
+            <th class="r">Failures</th>
+            <th class="r">Total</th>
+            <th class="r">Avg Duration</th>
+            <th class="r">Last Run</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
+            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-b&gt;/pytorch-&lt;hardware-b&gt;</a></td>
+            <td class="c"><span class="chip chip-default">L2</span></td>
+            <td class="r"><span class="chip chip-error">65.0%</span></td>
+            <td class="r">26</td><td class="r">14</td><td class="r">40</td>
+            <td class="r">31m 5s</td><td class="r">5/12/2026, 1:10 PM</td>
+          </tr>
+          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
+            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-a&gt;/&lt;hardware-a&gt;-ops</a></td>
+            <td class="c"><span class="chip chip-default">L2</span></td>
+            <td class="r"><span class="chip chip-warning">78.3%</span></td>
+            <td class="r">47</td><td class="r">13</td><td class="r">60</td>
+            <td class="r">24m 18s</td><td class="r">5/12/2026, 2:32 PM</td>
+          </tr>
+          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
+            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-d&gt;/pytorch-&lt;hardware-d&gt;-backend</a></td>
+            <td class="c"><span class="chip chip-default">L2</span></td>
+            <td class="r"><span class="chip chip-success">95.5%</span></td>
+            <td class="r">85</td><td class="r">4</td><td class="r">89</td>
+            <td class="r">12m 9s</td><td class="r">5/12/2026, 2:55 PM</td>
+          </tr>
+          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
+            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-c&gt;/torch-&lt;hardware-c&gt;</a></td>
+            <td class="c"><span class="chip chip-default">L3</span></td>
+            <td class="r"><span class="chip chip-success">97.1%</span></td>
+            <td class="r">66</td><td class="r">2</td><td class="r">68</td>
+            <td class="r">18m 42s</td><td class="r">5/12/2026, 3:01 PM</td>
+          </tr>
+          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
+            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-e&gt;/torch-&lt;hardware-e&gt;</a></td>
+            <td class="c"><span class="chip chip-default">L4</span></td>
+            <td class="r"><span class="chip chip-success">100.0%</span></td>
+            <td class="r">12</td><td class="r">0</td><td class="r">12</td>
+            <td class="r">8m 33s</td><td class="r">5/11/2026, 10:40 PM</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     VIEW 4: OOT PER-BACKEND — NEW PAGE from pages/oot/[org]/[repo].tsx
+     Uses same HUD-style rotated-header matrix
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="view-oot-backend" class="view">
+  <div class="oot-page">
+    <div style="margin-bottom: 8px;">
+      <h2 style="font-size: 2.125rem; font-weight: 400; margin: 0 0 4px;">&lt;company-a&gt;/&lt;hardware-a&gt;-ops</h2>
+      <a href="#" onclick="showView('oot-summary'); return false;" style="font-size: 0.875rem;">← Back to OOT Summary</a>
+    </div>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+      <div class="mui-select-wrapper">
+        <label>Time Range</label>
+        <select><option value="1">Last 24h</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option></select>
+      </div>
+    </div>
+    <p class="subtitle">Rows = PyTorch PRs, columns = downstream CI jobs. Click a cell to open the workflow run.</p>
+
+    <div class="stack-row" style="margin-bottom: 16px;">
+      <span class="chip chip-warning">Pass rate: 78.3%</span>
+      <span style="font-size: 0.875rem; color: #888;">47/60 jobs passed</span>
+    </div>
+
+    <!-- HUD-style matrix — same rotated headers and O/X/?/~ chars as the main HUD -->
+    <div class="paper" style="overflow-x: auto;">
+      <table class="hudTable">
+        <colgroup>
+          <col style="width: 8ch;"><col style="width: 8ch;">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob"><col class="colJob"><col class="colJob">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="regularHeader">PR</th>
+            <th class="regularHeader">SHA</th>
+            <th class="jobHeader"><div class="jobHeaderName">build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-float32</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-float16</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-bfloat16</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-complex</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-sparse</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-quantized</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-distributed</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-autograd</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-nn</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">lint</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="jobMetadata"><a href="#" onclick="showView('pr'); return false;">#183512</a></td>
+            <td class="jobMetadata mono">a1b2c3d</td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">build — success
+Duration: 2m 14s
+Queue: 8.2s</div></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">test-float32 — success
+Duration: 18m 32s
+Tests: 1240/1240 passed
+Queue: 12.3s</div></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">test-float16 — failure
+Duration: 12m 5s
+Tests: 1180/1210 passed
+Queue: 11.8s</div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">test-quantized — running
+Queue: 14.1s</div></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183498</a></td>
+            <td class="jobMetadata mono">e4f5a6b</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183475</a></td>
+            <td class="jobMetadata mono">c7d8e9f</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183460</a></td>
+            <td class="jobMetadata mono">f0a1b2c</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-cancelled">C</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183441</a></td>
+            <td class="jobMetadata mono">d3e4f5a</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183420</a></td>
+            <td class="jobMetadata mono">b6c7d8e</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183398</a></td>
+            <td class="jobMetadata mono">e9f0a1b</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+          <tr>
+            <td class="jobMetadata"><a href="#">#183380</a></td>
+            <td class="jobMetadata mono">a2b3c4d</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-flaky">F</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top: 12px; font-size: 0.8em; color: #888;"><em>This page automatically updates.</em></div>
+  </div>
+</div>
+
+<script>
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+}
+function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+function toggleAccordion(header) {
+  header.classList.toggle('open');
+  var body = header.nextElementSibling;
+  body.style.display = header.classList.contains('open') ? 'block' : 'none';
+}
+</script>
+
+</body>
+</html>
