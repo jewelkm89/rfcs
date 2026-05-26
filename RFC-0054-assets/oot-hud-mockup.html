@@ -687,7 +687,7 @@ Duration: 45m 12s</div></span>
           <span class="expand-icon">▾</span>
           <div class="stack-row">
             <strong>Out-of-Tree Backends</strong>
-            <span style="font-size: 0.875rem; color: #888;">(3/5 passed, 1 running)</span>
+            <span style="font-size: 0.875rem; color: #888;">(4/5 passed, 1 running)</span>
           </div>
         </div>
         <div class="accordion-body">
@@ -703,38 +703,38 @@ Duration: 45m 12s</div></span>
             </thead>
             <tbody>
               <tr>
-                <td>&lt;company-a&gt;/&lt;hardware-a&gt;-ops</td>
-                <td>test-float32</td>
+                <td>intel/intel-extension-for-pytorch</td>
+                <td>build-and-test</td>
                 <td class="c"><span class="chip chip-success">success</span></td>
-                <td class="r">18m 32s</td>
+                <td class="r">27s</td>
                 <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
               </tr>
               <tr>
-                <td>&lt;company-a&gt;/&lt;hardware-a&gt;-ops</td>
-                <td>test-float16</td>
+                <td>intel/intel-extension-for-pytorch</td>
+                <td>test-xpu-ops</td>
                 <td class="c"><span class="chip chip-error">failure</span></td>
-                <td class="r">12m 5s</td>
+                <td class="r">31s</td>
                 <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
               </tr>
               <tr>
-                <td>&lt;company-b&gt;/pytorch-&lt;hardware-b&gt;</td>
-                <td>test-default</td>
+                <td>pytorch-labs/ascend-pytorch</td>
+                <td>build-and-test</td>
                 <td class="c"><span class="chip chip-success">success</span></td>
-                <td class="r">22m 14s</td>
-                <td><a href="#">Run</a></td>
+                <td class="r">35s</td>
+                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
               </tr>
               <tr>
-                <td>&lt;company-c&gt;/torch-&lt;hardware-c&gt;</td>
-                <td>test-full</td>
+                <td>pytorch-labs/ascend-pytorch</td>
+                <td>test-npu</td>
                 <td class="c"><span class="chip chip-info">running</span></td>
                 <td class="r">–</td>
                 <td><a href="#">Run</a></td>
               </tr>
               <tr>
-                <td>&lt;company-d&gt;/pytorch-&lt;hardware-d&gt;-backend</td>
-                <td>test-core</td>
+                <td>pytorch-labs/cambricon-pytorch</td>
+                <td>build-and-test</td>
                 <td class="c"><span class="chip chip-success">success</span></td>
-                <td class="r">9m 48s</td>
+                <td class="r">32s</td>
                 <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
               </tr>
             </tbody>
@@ -775,39 +775,25 @@ Duration: 45m 12s</div></span>
         </thead>
         <tbody>
           <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-b&gt;/pytorch-&lt;hardware-b&gt;</a></td>
+            <td><a href="#" onclick="showView('oot-backend'); return false;">intel/intel-extension-for-pytorch</a></td>
             <td class="c"><span class="chip chip-default">L2</span></td>
-            <td class="r"><span class="chip chip-error">65.0%</span></td>
-            <td class="r">26</td><td class="r">14</td><td class="r">40</td>
-            <td class="r">31m 5s</td><td class="r">5/12/2026, 1:10 PM</td>
+            <td class="r"><span class="chip chip-success">91.7%</span></td>
+            <td class="r">44</td><td class="r">4</td><td class="r">48</td>
+            <td class="r">27s</td><td class="r">5/21/2026, 7:50 PM</td>
           </tr>
           <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-a&gt;/&lt;hardware-a&gt;-ops</a></td>
+            <td><a href="#" onclick="showView('oot-backend'); return false;">pytorch-labs/ascend-pytorch</a></td>
             <td class="c"><span class="chip chip-default">L2</span></td>
-            <td class="r"><span class="chip chip-warning">78.3%</span></td>
-            <td class="r">47</td><td class="r">13</td><td class="r">60</td>
-            <td class="r">24m 18s</td><td class="r">5/12/2026, 2:32 PM</td>
+            <td class="r"><span class="chip chip-success">92.2%</span></td>
+            <td class="r">47</td><td class="r">4</td><td class="r">51</td>
+            <td class="r">35s</td><td class="r">5/21/2026, 7:50 PM</td>
           </tr>
           <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-d&gt;/pytorch-&lt;hardware-d&gt;-backend</a></td>
+            <td><a href="#" onclick="showView('oot-backend'); return false;">pytorch-labs/cambricon-pytorch</a></td>
             <td class="c"><span class="chip chip-default">L2</span></td>
-            <td class="r"><span class="chip chip-success">95.5%</span></td>
-            <td class="r">85</td><td class="r">4</td><td class="r">89</td>
-            <td class="r">12m 9s</td><td class="r">5/12/2026, 2:55 PM</td>
-          </tr>
-          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-c&gt;/torch-&lt;hardware-c&gt;</a></td>
-            <td class="c"><span class="chip chip-default">L3</span></td>
-            <td class="r"><span class="chip chip-success">97.1%</span></td>
-            <td class="r">66</td><td class="r">2</td><td class="r">68</td>
-            <td class="r">18m 42s</td><td class="r">5/12/2026, 3:01 PM</td>
-          </tr>
-          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">&lt;company-e&gt;/torch-&lt;hardware-e&gt;</a></td>
-            <td class="c"><span class="chip chip-default">L4</span></td>
-            <td class="r"><span class="chip chip-success">100.0%</span></td>
-            <td class="r">12</td><td class="r">0</td><td class="r">12</td>
-            <td class="r">8m 33s</td><td class="r">5/11/2026, 10:40 PM</td>
+            <td class="r"><span class="chip chip-success">98.0%</span></td>
+            <td class="r">50</td><td class="r">1</td><td class="r">51</td>
+            <td class="r">32s</td><td class="r">5/21/2026, 7:50 PM</td>
           </tr>
         </tbody>
       </table>
@@ -822,7 +808,7 @@ Duration: 45m 12s</div></span>
 <div id="view-oot-backend" class="view">
   <div class="oot-page">
     <div style="margin-bottom: 8px;">
-      <h2 style="font-size: 2.125rem; font-weight: 400; margin: 0 0 4px;">&lt;company-a&gt;/&lt;hardware-a&gt;-ops</h2>
+      <h2 style="font-size: 2.125rem; font-weight: 400; margin: 0 0 4px;">intel/intel-extension-for-pytorch</h2>
       <a href="#" onclick="showView('oot-summary'); return false;" style="font-size: 0.875rem;">← Back to OOT Summary</a>
     </div>
     <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
@@ -834,8 +820,8 @@ Duration: 45m 12s</div></span>
     <p class="subtitle">Rows = PyTorch PRs, columns = downstream CI jobs. Click a cell to open the workflow run.</p>
 
     <div class="stack-row" style="margin-bottom: 16px;">
-      <span class="chip chip-warning">Pass rate: 78.3%</span>
-      <span style="font-size: 0.875rem; color: #888;">47/60 jobs passed</span>
+      <span class="chip chip-success">Pass rate: 91.7%</span>
+      <span style="font-size: 0.875rem; color: #888;">44/48 jobs passed</span>
     </div>
 
     <!-- HUD-style matrix — same rotated headers and O/X/?/~ chars as the main HUD -->
