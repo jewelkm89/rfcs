@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PyTorch CI HUD — With OOT Integration (Mockup)</title>
+<title>PyTorch CI HUD — With CRCR Integration (Mockup)</title>
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
    CSS Variables — verbatim from torchci/styles/globals.css
@@ -177,8 +177,6 @@ td.jobCell { text-align: center; padding: 2px; }
 
 /* ═══════════════════════════════════════════════════════════════════════
    JobConclusion — from JobConclusion.module.css + getConclusionChar
-   O=success, X=failure, ?=pending, ~=none, C=cancelled, S=skipped,
-   F=flaky (success after previous failure), Q=queued, N=neutral
    ═══════════════════════════════════════════════════════════════════════ */
 .conclusion { font-family: monospace; font-size: 1rem; font-weight: bold; display: inline-block; width: 14px; text-align: center; }
 .c-success { color: var(--color-success); }
@@ -193,7 +191,7 @@ td.jobCell { text-align: center; padding: 2px; }
 .c-classified { color: var(--color-classified); }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   HUD Controls Row — from hud.module.css
+   HUD Controls Row
    ═══════════════════════════════════════════════════════════════════════ */
 .hudControlsRow { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; width: 100%; }
 .settingsButton {
@@ -206,7 +204,7 @@ td.jobCell { text-align: center; padding: 2px; }
   font-size: 1em; border: 0px; padding: 0px; padding-left: 4px; color: var(--text-color);
 }
 
-/* Tooltip — lightweight version */
+/* Tooltip */
 .has-tooltip { position: relative; }
 .has-tooltip .tt {
   display: none; position: absolute; z-index: 1000; bottom: calc(100% + 6px);
@@ -219,8 +217,7 @@ td.jobCell { text-align: center; padding: 2px; }
 .has-tooltip:hover .tt { display: block; }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   OOT-specific MUI-like styles
-   From pages/oot/index.tsx, oot/[org]/[repo].tsx, OotPrSection.tsx
+   CRCR / MUI-like styles
    ═══════════════════════════════════════════════════════════════════════ */
 .oot-page { padding: 24px; max-width: 1600px; margin: 0 auto; }
 .oot-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -248,6 +245,11 @@ td.jobCell { text-align: center; padding: 2px; }
 .dark-mode .chip-warning { background: #e65100; color: #ffcc80; }
 .dark-mode .chip-info    { background: #0d47a1; color: #90caf9; }
 .dark-mode .chip-default { background: #424242; color: #bdbdbd; }
+
+.chip-outlined { background: transparent; border: 1px solid; }
+.chip-outlined.level-l2 { border-color: #0288d1; color: #0288d1; }
+.chip-outlined.level-l3 { border-color: #ed6c02; color: #ed6c02; }
+.chip-outlined.level-l4 { border-color: #2e7d32; color: #2e7d32; }
 
 .paper {
   border-radius: 4px; overflow: hidden;
@@ -278,6 +280,35 @@ td.jobCell { text-align: center; padding: 2px; }
 .stack-row { display: flex; align-items: center; gap: 8px; }
 .mono { font-family: "SF Mono", "Fira Code", Consolas, monospace; font-size: 0.8125rem; }
 
+/* Stat cards */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--dropdown-bg); border: 1px solid var(--border-color);
+  border-radius: 6px; padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.stat-card .stat-label { font-size: 0.6875rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-card .stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1.3; }
+.stat-card .stat-sub { font-size: 0.6875rem; color: #888; }
+.stat-value.good { color: #2e7d32; }
+.stat-value.warn { color: #ed6c02; }
+.stat-value.bad { color: #d32f2f; }
+
+/* Section divider */
+.section-divider {
+  display: flex; align-items: center; gap: 12px; margin: 4px 0 16px 0;
+}
+.section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+.section-divider h3 {
+  font-size: 0.75rem; font-weight: 600; color: #888;
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; margin: 0;
+}
+
+/* Status dot */
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; vertical-align: middle; }
+.status-dot.active { background: #2e7d32; box-shadow: 0 0 0 2px #e8f5e9; }
+.status-dot.stale { background: #9e9e9e; box-shadow: 0 0 0 2px #eee; }
+
 /* ═══════════════════════════════════════════════════════════════════════ */
 .view { display: none; }
 .view.active { display: block; }
@@ -286,22 +317,8 @@ td.jobCell { text-align: center; padding: 2px; }
   padding: 4px 10px; cursor: pointer; color: var(--text-color); font-size: 14px;
 }
 
-/* NEW badge for OOT nav link */
-.new-badge {
-  margin-left: 4px; padding: 1px 5px; font-size: 9px; font-weight: bold;
-  background-color: #ff6b35; color: white; border-radius: 8px;
-  text-transform: uppercase; line-height: 1; vertical-align: super;
-}
-
-/* Visual separator between existing HUD and our additions */
-.oot-addition-marker {
-  border: 2px dashed #ff6b35; border-radius: 6px; padding: 2px;
-  position: relative;
-}
-.oot-addition-marker::before {
-  content: "NEW — OOT Addition"; position: absolute; top: -10px; left: 12px;
-  background: #ff6b35; color: white; font-size: 10px; font-weight: bold;
-  padding: 1px 8px; border-radius: 4px; letter-spacing: 0.05em;
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
@@ -309,7 +326,7 @@ td.jobCell { text-align: center; padding: 2px; }
 
 <!-- ═══════════════════════════════════════════════════════════════════════
      NavBar — from components/layout/NavBar.tsx
-     OOT addition: "OOT" link with NEW badge added to left nav group
+     CRCR CI Summary added under Dev Infra dropdown
      ═══════════════════════════════════════════════════════════════════════ -->
 <nav class="navbar">
   <div>
@@ -320,10 +337,6 @@ td.jobCell { text-align: center; padding: 2px; }
       <li><a href="#">TorchVision</a></li>
       <li><a href="#">TorchAudio</a></li>
       <li><a href="#">Helion</a></li>
-      <!-- ★ OOT addition to NavBar ★ -->
-      <li class="oot-addition-marker" style="border-width: 1px; padding: 0.5rem 0.8rem;">
-        <a href="#" onclick="showView('oot-summary'); return false;">OOT<span class="new-badge">NEW</span></a>
-      </li>
     </ul>
   </div>
   <div class="nav-right">
@@ -332,26 +345,27 @@ td.jobCell { text-align: center; padding: 2px; }
       <li><a href="#">Requests</a></li>
       <li><a href="#">KPIs</a></li>
       <li class="dropdown-trigger">
-        <span>Benchmarks ▾</span>
+        <span>Benchmarks &#9662;</span>
         <div class="dropdown-menu"><a href="#">TorchBench</a><a href="#">Inductor Perf</a></div>
       </li>
       <li class="dropdown-trigger">
-        <span>Metrics ▾</span>
+        <span>Metrics &#9662;</span>
         <div class="dropdown-menu">
           <a href="#">Metrics</a>
-          <a href="#">Flambeau (PyTorch CI Agent) <span class="new-badge" style="font-size: 8px;">BETA</span></a>
+          <a href="#">Flambeau (PyTorch CI Agent)</a>
           <a href="#">vLLM CI metrics</a>
           <a href="#">Autorevert Metrics</a>
           <a href="#">Claude Billing</a>
         </div>
       </li>
       <li class="dropdown-trigger">
-        <span>Dev Infra ▾</span>
+        <span>Dev Infra &#9662;</span>
         <div class="dropdown-menu">
           <a href="#">TTS</a><a href="#">Queue Time Analysis</a>
           <a href="#">Nightly Dashboard</a><a href="#">Disabled Tests</a>
           <a href="#">Cost Analysis</a><a href="#">PyTorch Runners</a>
-          <a href="#">Test File Reports</a>
+          <a href="#">Test File Reports</a><a href="#">Mac Test Stats</a>
+          <a href="#" onclick="showView('crcr-summary'); return false;" style="font-weight: 500;">CRCR CI Summary</a>
         </div>
       </li>
       <li>
@@ -367,13 +381,10 @@ td.jobCell { text-align: center; padding: 2px; }
 </nav>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     VIEW 1: EXISTING HUD HOMEPAGE — /hud/pytorch/pytorch/main
-     From pages/hud/[repoOwner]/[repoName]/[branch]/[[...page]].tsx
+     VIEW 1: HUD HOMEPAGE — /hud/pytorch/pytorch/main
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="view-hud" class="view active">
   <div style="padding: 5px;">
-
-    <!-- HudHeader — ParamSelector for repo:branch -->
     <div style="display: flex; align-items: flex-end;">
       <h1>
         <span class="branchFormInput">pytorch/pytorch</span>
@@ -383,7 +394,6 @@ td.jobCell { text-align: center; padding: 2px; }
       <span style="margin-left: 10px; font-size: 12px; cursor: pointer; color: var(--link-color);">Copy link</span>
     </div>
 
-    <!-- FiltersAndSettings — JobFilterInput + SettingsPanel -->
     <div class="hudControlsRow">
       <form style="display: inline;" onsubmit="return false;">
         <input type="text" placeholder="Filter job name" style="padding: 4px 8px; font-size: 13px; width: 200px;" value="">
@@ -394,10 +404,8 @@ td.jobCell { text-align: center; padding: 2px; }
       </button>
     </div>
 
-    <!-- GroupedHudTable — the main commit/job matrix -->
     <div style="overflow-x: auto;">
       <table class="hudTable">
-        <!-- GroupHudTableColumns -->
         <colgroup>
           <col class="colTime"><col class="colSha"><col class="colCommit">
           <col class="colPr"><col class="colAuthor">
@@ -406,7 +414,6 @@ td.jobCell { text-align: center; padding: 2px; }
           <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
           <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
         </colgroup>
-        <!-- GroupHudTableHeader — Time, SHA, Commit, PR, Author + rotated job names -->
         <thead>
           <tr>
             <th class="regularHeader">Time</th>
@@ -414,12 +421,10 @@ td.jobCell { text-align: center; padding: 2px; }
             <th class="regularHeader">Commit</th>
             <th class="regularHeader">PR</th>
             <th class="regularHeader">Author</th>
-            <!-- Group headers (bold) -->
-            <th class="jobHeader"><div class="jobHeaderNameBold">linux ▸</div></th>
-            <th class="jobHeader"><div class="jobHeaderNameBold">win ▸</div></th>
-            <th class="jobHeader"><div class="jobHeaderNameBold">mac ▸</div></th>
-            <th class="jobHeader"><div class="jobHeaderNameBold">inductor ▸</div></th>
-            <!-- Individual job headers -->
+            <th class="jobHeader"><div class="jobHeaderNameBold">linux &#9656;</div></th>
+            <th class="jobHeader"><div class="jobHeaderNameBold">win &#9656;</div></th>
+            <th class="jobHeader"><div class="jobHeaderNameBold">mac &#9656;</div></th>
+            <th class="jobHeader"><div class="jobHeaderNameBold">inductor &#9656;</div></th>
             <th class="jobHeader"><div class="jobHeaderName">Lint</div></th>
             <th class="jobHeader"><div class="jobHeaderName">pull / linux-jammy-py3.8-gcc11 / build</div></th>
             <th class="jobHeader"><div class="jobHeaderName">pull / linux-jammy-py3.8-gcc11 / test</div></th>
@@ -437,21 +442,17 @@ td.jobCell { text-align: center; padding: 2px; }
             <th class="jobHeader"><div class="jobHeaderName">trunk / linux-focal-py3.11 / test</div></th>
           </tr>
         </thead>
-        <!-- HudTableBody → HudRow → JobCell → JobConclusion -->
         <tbody>
-          <!-- Commit row 1 -->
           <tr>
             <td class="jobMetadata">3 min ago</td>
             <td class="jobMetadata"><a href="#">a1b2c3d</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Improve conv2d backward pass performance</a></div></td>
-            <td class="jobMetadata"><a href="#">#183512</a></td>
+            <td class="jobMetadata"><a href="#" onclick="showView('pr'); return false;">#183512</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">contributor42</a></div></td>
-            <!-- group cells -->
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">linux: 8/8 passed</div></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">win: 1/2 complete</div></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">mac: 0/1 complete</div></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">inductor: running</div></td>
-            <!-- individual cells -->
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -470,168 +471,56 @@ Duration: 45m 12s</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-none">~</span></td>
           </tr>
-          <!-- Commit row 2 -->
           <tr>
             <td class="jobMetadata">18 min ago</td>
             <td class="jobMetadata"><a href="#">e4f5a6b</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Fix memory leak in autograd engine</a></div></td>
             <td class="jobMetadata"><a href="#">#183498</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">pytorchbot</a></div></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
-          <!-- Commit row 3 — forced merge -->
           <tr>
             <td class="jobMetadata">42 min ago</td>
             <td class="jobMetadata"><a href="#">c7d8e9f</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[dynamo] Add support for torch.vmap</a></div></td>
-            <td class="jobMetadata"><a href="#"><mark class="forcedMerge">#183475</mark></a></td>
+            <td class="jobMetadata"><a href="#">#183475</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">dynamodev</a></div></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-flaky">F</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
-          <!-- Commit row 4 -->
           <tr>
             <td class="jobMetadata">1 hr ago</td>
             <td class="jobMetadata"><a href="#">f0a1b2c</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Refactor inductor scheduler pass</a></div></td>
             <td class="jobMetadata"><a href="#">#183460</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">inductor_fan</a></div></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
-          <!-- Commit row 5 -->
-          <tr>
-            <td class="jobMetadata">1 hr ago</td>
-            <td class="jobMetadata"><a href="#">d3e4f5a</a></td>
-            <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Update FBGEMM to latest nightly</a></div></td>
-            <td class="jobMetadata"><a href="#">#183441</a></td>
-            <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">fbgemmbot</a></div></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-          </tr>
-          <!-- Commit row 6 — forced merge with failures -->
           <tr>
             <td class="jobMetadata">2 hr ago</td>
             <td class="jobMetadata"><a href="#">b6c7d8e</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Enable flex attention for inference</a></div></td>
-            <td class="jobMetadata"><a href="#"><mark class="forcedMergeWithFailure">#183420</mark></a></td>
+            <td class="jobMetadata"><a href="#">#183420</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">attndev</a></div></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- PageSelector — from components/common/PageSelector.tsx -->
-    <div style="margin-top: 8px;">
-      Page 1: Prev | <a href="#">Next</a>
-    </div>
-    <br>
-    <div><em>This page automatically updates.</em></div>
+    <div style="margin-top: 8px;">Page 1: Prev | <a href="#">Next</a></div>
+    <br><div><em>This page automatically updates.</em></div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     VIEW 2: EXISTING PR PAGE + OOT ADDITION
-     From pages/[repoOwner]/[repoName]/pull/[prNumber].tsx
-     OOT addition: OotPrSection accordion at the bottom
+     VIEW 2: PR PAGE + CRCR Section
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="view-pr" class="view">
   <div style="padding: 12px;">
-
-    <!-- PR header — from pull/[prNumber].tsx -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
       <h1 style="font-size: 1.5rem; font-weight: 400;">
         Improve conv2d backward pass performance
@@ -640,7 +529,6 @@ Duration: 45m 12s</div></td>
       <span class="chip chip-info" style="cursor: pointer;">Dr. CI</span>
     </div>
 
-    <!-- CommitHeader — commit selector dropdown -->
     <div style="margin: 12px 0 20px;">
       Commit:
       <select style="padding: 4px 8px; font-size: 13px;">
@@ -649,97 +537,62 @@ Duration: 45m 12s</div></td>
       </select>
     </div>
 
-    <!-- CommitInfo — existing in-tree CI results -->
     <div style="margin-bottom: 8px;">
       <h3 style="font-weight: 500; font-size: 1rem; margin-bottom: 8px;">Commit CI Status</h3>
       <div style="display: flex; gap: 4px; flex-wrap: wrap; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
-        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">Lint — success (1m 12s)</div></span>
-        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-jammy-py3.8-gcc11 / build — success (8m 32s)</div></span>
-        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-jammy-py3.8-gcc11 / test — success (22m 14s)</div></span>
-        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-focal-cuda12.1 / build — success (12m 3s)</div></span>
-        <span class="conclusion c-failure has-tooltip" style="cursor:pointer;">X<div class="tt">pull / linux-focal-cuda12.1 / test — failure
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">Lint &mdash; success (1m 12s)</div></span>
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-jammy-py3.8-gcc11 / build &mdash; success (8m 32s)</div></span>
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-jammy-py3.8-gcc11 / test &mdash; success (22m 14s)</div></span>
+        <span class="conclusion c-success has-tooltip" style="cursor:pointer;">O<div class="tt">pull / linux-focal-cuda12.1 / build &mdash; success (12m 3s)</div></span>
+        <span class="conclusion c-failure has-tooltip" style="cursor:pointer;">X<div class="tt">pull / linux-focal-cuda12.1 / test &mdash; failure
 FAIL test_sparse (SparseTestCUDA)
 Duration: 45m 12s</div></span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-pending">?</span>
-        <span class="conclusion c-pending">?</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-pending">?</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-success">O</span>
-        <span class="conclusion c-none">~</span>
+        <span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-pending">?</span><span class="conclusion c-pending">?</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-pending">?</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-success">O</span><span class="conclusion c-none">~</span>
       </div>
     </div>
 
-    <!-- ★ OOT ADDITION: OotPrSection — from components/oot/OotPrSection.tsx ★ -->
-    <div class="oot-addition-marker">
-      <div class="accordion" style="margin-top: 14px;">
-        <div class="accordion-header open" onclick="toggleAccordion(this)">
-          <span class="expand-icon">▾</span>
-          <div class="stack-row">
-            <strong>Out-of-Tree Backends</strong>
-            <span style="font-size: 0.875rem; color: #888;">(4/5 passed, 1 running)</span>
-          </div>
+    <!-- CRCR Section: OotPrSection — from components/oot/OotPrSection.tsx -->
+    <div class="accordion" style="margin-top: 14px;">
+      <div class="accordion-header open" onclick="toggleAccordion(this)">
+        <span class="expand-icon">&#9662;</span>
+        <div class="stack-row">
+          <strong>Cross-Repository CI</strong>
+          <span style="font-size: 0.875rem; color: #888;">(4/5 passed, 1 running)</span>
         </div>
-        <div class="accordion-body">
-          <table class="oot-table">
-            <thead>
-              <tr>
-                <th>Backend</th>
-                <th>Job</th>
-                <th class="c">Status</th>
-                <th class="r">Duration</th>
-                <th>Links</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>intel/intel-extension-for-pytorch</td>
-                <td>build-and-test</td>
-                <td class="c"><span class="chip chip-success">success</span></td>
-                <td class="r">27s</td>
-                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
-              </tr>
-              <tr>
-                <td>intel/intel-extension-for-pytorch</td>
-                <td>test-xpu-ops</td>
-                <td class="c"><span class="chip chip-error">failure</span></td>
-                <td class="r">31s</td>
-                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
-              </tr>
-              <tr>
-                <td>pytorch-labs/ascend-pytorch</td>
-                <td>build-and-test</td>
-                <td class="c"><span class="chip chip-success">success</span></td>
-                <td class="r">35s</td>
-                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
-              </tr>
-              <tr>
-                <td>pytorch-labs/ascend-pytorch</td>
-                <td>test-npu</td>
-                <td class="c"><span class="chip chip-info">running</span></td>
-                <td class="r">–</td>
-                <td><a href="#">Run</a></td>
-              </tr>
-              <tr>
-                <td>pytorch-labs/cambricon-pytorch</td>
-                <td>build-and-test</td>
-                <td class="c"><span class="chip chip-success">success</span></td>
-                <td class="r">32s</td>
-                <td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      </div>
+      <div class="accordion-body">
+        <table class="oot-table">
+          <thead>
+            <tr><th>Backend</th><th>Job</th><th class="c">Status</th><th class="r">Duration</th><th>Links</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>intel/intel-extension-for-pytorch</td><td>build-and-test</td>
+              <td class="c"><span class="chip chip-success">success</span></td>
+              <td class="r">27s</td><td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+            </tr>
+            <tr>
+              <td>intel/intel-extension-for-pytorch</td><td>test-xpu-ops</td>
+              <td class="c"><span class="chip chip-error">failure</span></td>
+              <td class="r">31s</td><td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+            </tr>
+            <tr>
+              <td>pytorch-labs/ascend-pytorch</td><td>build-and-test</td>
+              <td class="c"><span class="chip chip-success">success</span></td>
+              <td class="r">35s</td><td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+            </tr>
+            <tr>
+              <td>pytorch-labs/ascend-pytorch</td><td>test-npu</td>
+              <td class="c"><span class="chip chip-info">running</span></td>
+              <td class="r">&ndash;</td><td><a href="#">Run</a></td>
+            </tr>
+            <tr>
+              <td>pytorch-labs/cambricon-pytorch</td><td>build-and-test</td>
+              <td class="c"><span class="chip chip-success">success</span></td>
+              <td class="r">32s</td><td><a href="#" style="margin-right: 8px;">Run</a> <a href="#">Artifacts</a></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -747,22 +600,50 @@ Duration: 45m 12s</div></span>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     VIEW 3: OOT SUMMARY — NEW PAGE from pages/oot/index.tsx
+     VIEW 3: CRCR SUMMARY — /crcr (from pages/crcr/index.tsx)
      ═══════════════════════════════════════════════════════════════════════ -->
-<div id="view-oot-summary" class="view">
+<div id="view-crcr-summary" class="view">
   <div class="oot-page">
     <div class="oot-page-header">
-      <h2>Out-of-Tree CI Summary</h2>
+      <h2>Cross-Repository CI Summary</h2>
       <div class="mui-select-wrapper">
         <label>Time Range</label>
         <select><option value="1">Last 24h</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option></select>
       </div>
     </div>
     <p class="subtitle">Cross-repo CI health overview. Repos sorted by pass rate (worst first). Click a row to see the per-backend dashboard.</p>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-label">Registered Repos</span>
+        <span class="stat-value">3</span>
+        <span class="stat-sub">across 2 organizations</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Overall Pass Rate</span>
+        <span class="stat-value good">93.3%</span>
+        <span class="stat-sub">141 / 151 jobs passed</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total CI Runs</span>
+        <span class="stat-value">151</span>
+        <span class="stat-sub">last 7 days</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Avg Duration</span>
+        <span class="stat-value">31s</span>
+        <span class="stat-sub">median: 32s</span>
+      </div>
+    </div>
+
+    <div class="section-divider"><h3>Backend Health</h3></div>
+
     <div class="paper">
       <table class="oot-table">
         <thead>
           <tr>
+            <th style="width: 28px;"></th>
             <th>Backend Repository</th>
             <th class="c">Level</th>
             <th class="r">Pass Rate</th>
@@ -774,26 +655,29 @@ Duration: 45m 12s</div></span>
           </tr>
         </thead>
         <tbody>
-          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">intel/intel-extension-for-pytorch</a></td>
-            <td class="c"><span class="chip chip-default">L2</span></td>
+          <tr style="cursor:pointer;" onclick="showView('crcr-backend')">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="#" onclick="showView('crcr-backend'); return false;">intel/intel-extension-for-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l2">L2</span></td>
             <td class="r"><span class="chip chip-success">91.7%</span></td>
-            <td class="r">44</td><td class="r">4</td><td class="r">48</td>
-            <td class="r">27s</td><td class="r">5/21/2026, 7:50 PM</td>
+            <td class="r">44</td><td class="r" style="color: #c62828; font-weight: 500;">4</td><td class="r">48</td>
+            <td class="r">27s</td><td class="r" style="color: #888;">12m ago</td>
           </tr>
-          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">pytorch-labs/ascend-pytorch</a></td>
-            <td class="c"><span class="chip chip-default">L2</span></td>
+          <tr style="cursor:pointer;" onclick="showView('crcr-backend')">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="#" onclick="showView('crcr-backend'); return false;">pytorch-labs/ascend-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l2">L2</span></td>
             <td class="r"><span class="chip chip-success">92.2%</span></td>
-            <td class="r">47</td><td class="r">4</td><td class="r">51</td>
-            <td class="r">35s</td><td class="r">5/21/2026, 7:50 PM</td>
+            <td class="r">47</td><td class="r" style="color: #c62828; font-weight: 500;">4</td><td class="r">51</td>
+            <td class="r">35s</td><td class="r" style="color: #888;">38m ago</td>
           </tr>
-          <tr style="cursor:pointer;" onclick="showView('oot-backend')">
-            <td><a href="#" onclick="showView('oot-backend'); return false;">pytorch-labs/cambricon-pytorch</a></td>
-            <td class="c"><span class="chip chip-default">L2</span></td>
+          <tr style="cursor:pointer;" onclick="showView('crcr-backend')">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="#" onclick="showView('crcr-backend'); return false;">pytorch-labs/cambricon-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l2">L2</span></td>
             <td class="r"><span class="chip chip-success">98.0%</span></td>
-            <td class="r">50</td><td class="r">1</td><td class="r">51</td>
-            <td class="r">32s</td><td class="r">5/21/2026, 7:50 PM</td>
+            <td class="r">50</td><td class="r" style="font-weight: 500;">1</td><td class="r">51</td>
+            <td class="r">32s</td><td class="r" style="color: #888;">5m ago</td>
           </tr>
         </tbody>
       </table>
@@ -802,14 +686,13 @@ Duration: 45m 12s</div></span>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     VIEW 4: OOT PER-BACKEND — NEW PAGE from pages/oot/[org]/[repo].tsx
-     Uses same HUD-style rotated-header matrix
+     VIEW 4: CRCR PER-BACKEND — /crcr/[org]/[repo]
      ═══════════════════════════════════════════════════════════════════════ -->
-<div id="view-oot-backend" class="view">
+<div id="view-crcr-backend" class="view">
   <div class="oot-page">
     <div style="margin-bottom: 8px;">
       <h2 style="font-size: 2.125rem; font-weight: 400; margin: 0 0 4px;">intel/intel-extension-for-pytorch</h2>
-      <a href="#" onclick="showView('oot-summary'); return false;" style="font-size: 0.875rem;">← Back to OOT Summary</a>
+      <a href="#" onclick="showView('crcr-summary'); return false;" style="font-size: 0.875rem;">&larr; Back to CRCR Summary</a>
     </div>
     <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
       <div class="mui-select-wrapper">
@@ -817,14 +700,13 @@ Duration: 45m 12s</div></span>
         <select><option value="1">Last 24h</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option></select>
       </div>
     </div>
-    <p class="subtitle">Rows = PyTorch PRs, columns = downstream CI jobs. Click a cell to open the workflow run.</p>
+    <p class="subtitle">Rows = PyTorch PRs, columns = downstream CI jobs. Click a chip to open the workflow run.</p>
 
     <div class="stack-row" style="margin-bottom: 16px;">
-      <span class="chip chip-success">Pass rate: 91.7%</span>
+      <span class="chip chip-success" style="font-size: 0.9rem; padding: 4px 14px;">Pass rate: 91.7%</span>
       <span style="font-size: 0.875rem; color: #888;">44/48 jobs passed</span>
     </div>
 
-    <!-- HUD-style matrix — same rotated headers and O/X/?/~ chars as the main HUD -->
     <div class="paper" style="overflow-x: auto;">
       <table class="hudTable">
         <colgroup>
@@ -854,21 +736,21 @@ Duration: 45m 12s</div></span>
           <tr>
             <td class="jobMetadata"><a href="#" onclick="showView('pr'); return false;">#183512</a></td>
             <td class="jobMetadata mono">a1b2c3d</td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">build — success
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">build &mdash; success
 Duration: 2m 14s
 Queue: 8.2s</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">test-float32 — success
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">test-float32 &mdash; success
 Duration: 18m 32s
 Tests: 1240/1240 passed
 Queue: 12.3s</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">test-float16 — failure
+            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">test-float16 &mdash; failure
 Duration: 12m 5s
 Tests: 1180/1210 passed
 Queue: 11.8s</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">test-quantized — running
+            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">test-quantized &mdash; running
 Queue: 14.1s</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -876,109 +758,32 @@ Queue: 14.1s</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183498</a></td>
-            <td class="jobMetadata mono">e4f5a6b</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183498</a></td><td class="jobMetadata mono">e4f5a6b</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183475</a></td>
-            <td class="jobMetadata mono">c7d8e9f</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183475</a></td><td class="jobMetadata mono">c7d8e9f</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183460</a></td>
-            <td class="jobMetadata mono">f0a1b2c</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-cancelled">C</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183460</a></td><td class="jobMetadata mono">f0a1b2c</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-cancelled">C</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183441</a></td>
-            <td class="jobMetadata mono">d3e4f5a</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
-            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183441</a></td><td class="jobMetadata mono">d3e4f5a</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183420</a></td>
-            <td class="jobMetadata mono">b6c7d8e</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183420</a></td><td class="jobMetadata mono">b6c7d8e</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183398</a></td>
-            <td class="jobMetadata mono">e9f0a1b</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183398</a></td><td class="jobMetadata mono">e9f0a1b</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td class="jobMetadata"><a href="#">#183380</a></td>
-            <td class="jobMetadata mono">a2b3c4d</td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-flaky">F</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobMetadata"><a href="#">#183380</a></td><td class="jobMetadata mono">a2b3c4d</td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
         </tbody>
       </table>
