@@ -349,15 +349,7 @@ td.jobCell { text-align: center; padding: 2px; }
       <li><a href="#">TorchVision</a></li>
       <li><a href="#">TorchAudio</a></li>
       <li><a href="#">Helion</a></li>
-      <li class="dropdown-trigger">
-        <span style="cursor: pointer;"><a href="#" onclick="showView('crcr-summary'); return false;">CRCR &#9662;</a></span>
-        <div class="dropdown-menu">
-          <a href="#" onclick="showView('crcr-summary'); return false;" style="font-weight: 500; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 4px;">CRCR Summary</a>
-          <a href="#" onclick="showView('crcr-backend'); return false;">intel/intel-extension-for-pytorch</a>
-          <a href="#" onclick="showView('crcr-backend'); return false;">pytorch-labs/ascend-pytorch</a>
-          <a href="#" onclick="showView('crcr-backend'); return false;">pytorch-labs/cambricon-pytorch</a>
-        </div>
-      </li>
+      <li><a href="#" onclick="showView('crcr-summary'); return false;">CRCR</a></li>
     </ul>
   </div>
   <div class="nav-right">
@@ -434,11 +426,6 @@ td.jobCell { text-align: center; padding: 2px; }
           <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
           <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
           <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
-          <!-- CRCR columns -->
-          <col style="width: 3px; min-width: 3px; max-width: 3px;"><!-- separator -->
-          <col class="colJob"><col class="colJob"><col class="colJob"><!-- intel -->
-          <col class="colJob"><col class="colJob"><col class="colJob"><!-- ascend -->
-          <col class="colJob"><col class="colJob"><!-- cambricon -->
         </colgroup>
         <thead>
           <tr>
@@ -466,16 +453,6 @@ td.jobCell { text-align: center; padding: 2px; }
             <th class="jobHeader"><div class="jobHeaderName">pull / manylinux / build</div></th>
             <th class="jobHeader"><div class="jobHeaderName">pull / linux-jammy-py3.12 / build</div></th>
             <th class="jobHeader"><div class="jobHeaderName">trunk / linux-focal-py3.11 / test</div></th>
-            <!-- CRCR separator + group headers + sub-job headers -->
-            <th class="jobHeader" style="background: var(--border-color); padding: 0; width: 3px;"></th>
-            <th class="jobHeader"><div class="jobHeaderNameBold" style="color: #0288d1;">intel &#9656;</div></th>
-            <th class="jobHeader"><div class="jobHeaderName">intel / build</div></th>
-            <th class="jobHeader"><div class="jobHeaderName">intel / test-xpu</div></th>
-            <th class="jobHeader"><div class="jobHeaderNameBold" style="color: #0288d1;">ascend &#9656;</div></th>
-            <th class="jobHeader"><div class="jobHeaderName">ascend / build</div></th>
-            <th class="jobHeader"><div class="jobHeaderName">ascend / test-npu</div></th>
-            <th class="jobHeader"><div class="jobHeaderNameBold" style="color: #0288d1;">cambricon &#9656;</div></th>
-            <th class="jobHeader"><div class="jobHeaderName">cambricon / build</div></th>
           </tr>
         </thead>
         <tbody>
@@ -506,21 +483,6 @@ Duration: 45m 12s</div></td>
             <td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-none">~</span></td>
-            <!-- CRCR: separator + intel(group, build, test-xpu) + ascend(group, build, test-npu) + cambricon(group, build) -->
-            <td style="background: var(--border-color); padding: 0;"></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">intel: 1/2 complete, 1 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">intel / build &mdash; success
-Duration: 2m 14s</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">intel / test-xpu &mdash; running
-Queue: 8.2s</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">ascend: 1/2 complete, 1 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">ascend / build &mdash; success
-Duration: 3m 5s</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">ascend / test-npu &mdash; running
-Queue: 11.3s</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon / build &mdash; success
-Duration: 1m 52s</div></td>
           </tr>
           <tr>
             <td class="jobMetadata">18 min ago</td>
@@ -530,10 +492,6 @@ Duration: 1m 52s</div></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">pytorchbot</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td style="background: var(--border-color); padding: 0;"></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">intel: 2/2 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">ascend: 2/2 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon: 1/1 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">42 min ago</td>
@@ -543,10 +501,6 @@ Duration: 1m 52s</div></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">dynamodev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td style="background: var(--border-color); padding: 0;"></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">intel: 2/2 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">ascend: 2/2 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon: 1/1 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">1 hr ago</td>
@@ -556,12 +510,6 @@ Duration: 1m 52s</div></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">inductor_fan</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td style="background: var(--border-color); padding: 0;"></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel: 1/2 passed, 1 failed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel / test-xpu &mdash; failure
-Duration: 14m 3s
-Tests: 890/1210 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">ascend: 2/2 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon: 1/1 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">2 hr ago</td>
@@ -571,14 +519,6 @@ Tests: 890/1210 passed</div></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">attndev</a></div></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
-            <td style="background: var(--border-color); padding: 0;"></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel: 1/2 passed, 1 failed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel / test-xpu &mdash; failure
-Duration: 11m 48s
-Tests: 920/1210 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">ascend: 1/2 passed, 1 failed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">ascend / test-npu &mdash; failure
-Duration: 8m 22s
-Tests: 310/380 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon: 1/1 passed</div></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
         </tbody>
       </table>
