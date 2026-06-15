@@ -396,226 +396,176 @@ td.jobCell { text-align: center; padding: 2px; }
   </div>
 </nav>
 
-<div id="view-crcr-summary" >
-  <div style="padding: 5px;">
-    <div style="display: flex; align-items: flex-end; justify-content: space-between;">
-      <h1>
-        <span class="branchFormInput">pytorch/pytorch</span>
-        :
-        <span class="branchFormInput">main</span>
-        <span style="font-size: 0.6em; font-weight: normal; color: #0288d1; margin-left: 8px;">[CRCR View]</span>
-      </h1>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <select style="padding: 4px 8px; font-size: 13px;">
-          <option value="1">Last 24h</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option>
-        </select>
+<div id="view-crcr-summary">
+  <div class="oot-page">
+    <div class="oot-page-header">
+      <h2>Cross-Repository CI Summary</h2>
+      <div class="mui-select-wrapper">
+        <label>Time Range</label>
+        <select><option value="1">Last 24h</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option></select>
+      </div>
+    </div>
+    <p class="subtitle">Cross-repo CI health overview. Repos sorted by pass rate (worst first). Click a row to see the per-backend dashboard.</p>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-label">Registered Repos</span>
+        <span class="stat-value">6</span>
+        <span class="stat-sub">across 3 levels (L2/L3/L4) + 3 L1</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Overall Pass Rate</span>
+        <span class="stat-value good">93.3%</span>
+        <span class="stat-sub">280 / 300 jobs passed</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total CI Runs</span>
+        <span class="stat-value">300</span>
+        <span class="stat-sub">last 7 days</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Avg Duration</span>
+        <span class="stat-value">31s</span>
+        <span class="stat-sub">median: 32s</span>
       </div>
     </div>
 
-    <p style="font-size: 0.8em; color: #888; margin: 4px 0 12px;">Cross-repo CI health across all integration levels. Click a repo name for the per-backend dashboard.</p>
-
     <!-- L1 Integrations -->
-    <div style="margin-bottom: 16px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--dropdown-bg);">
-      <span style="font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.04em;">L1 Integrations</span>
-      <span style="font-size: 0.7rem; color: #aaa; margin-left: 6px;">(webhook-only &mdash; no CI results)</span>
-      <div style="display: flex; gap: 16px; margin-top: 6px; flex-wrap: wrap;">
-        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 4px;">
+    <div class="section-divider"><h3>L1 Integrations (webhook-only)</h3></div>
+    <div style="margin-bottom: 20px; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--dropdown-bg);">
+      <p style="font-size: 0.8rem; color: #888; margin: 0 0 8px;">These repos receive webhook notifications on new commits. No CI results are reported back.</p>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
           <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
           qualcomm/ai-engine-pytorch
         </a>
-        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 4px;">
+        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
           <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
           graphcore/poptorch
         </a>
-        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 4px;">
+        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
           <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
           habana/habana-pytorch
         </a>
       </div>
     </div>
 
-    <!-- HUD-style grid: repos as rows, recent commits as columns -->
-    <div style="overflow-x: auto;">
-      <table class="hudTable">
-        <colgroup>
-          <col style="width: 28ch;">
-          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
-          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
-          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
-        </colgroup>
+    <!-- L2 Backend Health -->
+    <div class="section-divider"><h3>L2 Backends (callback-only)</h3></div>
+    <div class="paper" style="margin-bottom: 20px;">
+      <table class="oot-table">
         <thead>
           <tr>
-            <th class="regularHeader" style="vertical-align: bottom;">Backend Repository</th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183512</a><br>a1b2c3d</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183498</a><br>e4f5a6b</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183475</a><br>c7d8e9f</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183460</a><br>f0a1b2c</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183420</a><br>b6c7d8e</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183398</a><br>d3e4f5a</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183380</a><br>e9f0a1b</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183362</a><br>a2b3c4d</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183341</a><br>b4c5d6e</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183320</a><br>c6d7e8f</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183301</a><br>d7e8f9a</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183288</a><br>e8f9a0b</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183275</a><br>f9a0b1c</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183260</a><br>a0b1c2d</div></th>
-            <th class="jobHeader"><div class="jobHeaderName"><a href="#">#183248</a><br>b1c2d3e</div></th>
+            <th style="width: 28px;"></th>
+            <th>Backend Repository</th>
+            <th class="c">Level</th>
+            <th class="r">Pass Rate</th>
+            <th class="r">Success</th>
+            <th class="r">Failures</th>
+            <th class="r">Total</th>
+            <th class="r">Avg Duration</th>
+            <th class="r">Last Run</th>
           </tr>
         </thead>
         <tbody>
-          <!-- L2 Backends -->
-          <tr>
-            <td class="jobMetadata" style="white-space: nowrap;">
-              <span class="chip chip-outlined level-l2" style="font-size: 0.6rem; padding: 0px 5px; margin-right: 4px;">L2</span>
-              <a href="#" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'; return false;">intel/intel-ext-for-pytorch</a>
-            </td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">2/4 passed, 2 running
-build: O, test-xpu: ?, test-float32: O, test-float16: ?</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">2/4 passed, 2 failed
-test-xpu: X, test-float16: X</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">2/4 passed, 2 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">3/4 passed, 1 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">2/4 passed, 2 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">1/4 passed, 3 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">4/4 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">2/4 passed, 2 failed</div></td>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">intel/intel-extension-for-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l2">L2</span></td>
+            <td class="r"><span class="chip chip-success">91.7%</span></td>
+            <td class="r">44</td><td class="r" style="color: #c62828; font-weight: 500;">4</td><td class="r">48</td>
+            <td class="r">27s</td><td class="r" style="color: #888;">12m ago</td>
           </tr>
-          <tr>
-            <td class="jobMetadata" style="white-space: nowrap;">
-              <span class="chip chip-outlined level-l2" style="font-size: 0.6rem; padding: 0px 5px; margin-right: 4px;">L2</span>
-              <a href="#" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'; return false;">pytorch-labs/ascend-pytorch</a>
-            </td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">1/2 passed, 1 running
-build: O, test-npu: ?</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">1/2 passed, 1 failed
-test-npu: X</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">1/2 passed, 1 failed
-test-npu: X</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">1/2 passed, 1 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">1/2 passed, 1 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">1/2 passed, 1 failed</div></td>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/ascend-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l2">L2</span></td>
+            <td class="r"><span class="chip chip-success">92.2%</span></td>
+            <td class="r">47</td><td class="r" style="color: #c62828; font-weight: 500;">4</td><td class="r">51</td>
+            <td class="r">35s</td><td class="r" style="color: #888;">38m ago</td>
           </tr>
-          <tr>
-            <td class="jobMetadata" style="white-space: nowrap;">
-              <span class="chip chip-outlined level-l2" style="font-size: 0.6rem; padding: 0px 5px; margin-right: 4px;">L2</span>
-              <a href="#" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'; return false;">pytorch-labs/cambricon-pytorch</a>
-            </td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">0/1 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">0/1 failed</div></td>
-          </tr>
-          <!-- L3 Backends -->
-          <tr>
-            <td class="jobMetadata" style="white-space: nowrap;">
-              <span class="chip chip-outlined level-l3" style="font-size: 0.6rem; padding: 0px 5px; margin-right: 4px;">L3</span>
-              <a href="#" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'; return false;">intel/intel-ext-for-pytorch</a>
-            </td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">L3 check run: 1/2 complete
-build: O, test-xpu: ?</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed
-test-xpu: X</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">L3 check run: 1/2 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 0/2 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed</div></td>
-          </tr>
-          <tr>
-            <td class="jobMetadata" style="white-space: nowrap;">
-              <span class="chip chip-outlined level-l3" style="font-size: 0.6rem; padding: 0px 5px; margin-right: 4px;">L3</span>
-              <a href="#" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'; return false;">pytorch-labs/ascend-pytorch</a>
-            </td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">L3 check run: 1/2 running
-build: O, test-npu: ?</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed
-test-npu: X</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">L3 check run: 1/2 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L3 check run: 2/2 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">L3 check run: 1/2 running</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L3 check run: 1/2 failed</div></td>
-          </tr>
-          <!-- L4 Backend -->
-          <tr>
-            <td class="jobMetadata" style="white-space: nowrap;">
-              <span class="chip chip-outlined level-l4" style="font-size: 0.6rem; padding: 0px 5px; margin-right: 4px;">L4</span>
-              <a href="#" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'; return false;">pytorch-labs/cambricon-pytorch</a>
-            </td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L4 gated: 0/1 failed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">L4 gated: 1/1 passed</div></td>
-            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">L4 gated: 0/1 failed</div></td>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/cambricon-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l2">L2</span></td>
+            <td class="r"><span class="chip chip-success">98.0%</span></td>
+            <td class="r">50</td><td class="r" style="font-weight: 500;">1</td><td class="r">51</td>
+            <td class="r">32s</td><td class="r" style="color: #888;">5m ago</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div style="margin-top: 8px;">Page 1: Prev | <a href="#">Next</a></div>
-    <br><div><em>This page automatically updates.</em></div>
+    <!-- L3 Backend Health -->
+    <div class="section-divider"><h3>L3 Backends (check runs on PR)</h3></div>
+    <div class="paper" style="margin-bottom: 20px;">
+      <table class="oot-table">
+        <thead>
+          <tr>
+            <th style="width: 28px;"></th>
+            <th>Backend Repository</th>
+            <th class="c">Level</th>
+            <th class="r">Pass Rate</th>
+            <th class="r">Success</th>
+            <th class="r">Failures</th>
+            <th class="r">Total</th>
+            <th class="r">Avg Duration</th>
+            <th class="r">Last Run</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">intel/intel-extension-for-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l3">L3</span></td>
+            <td class="r"><span class="chip chip-success">89.6%</span></td>
+            <td class="r">43</td><td class="r" style="color: #c62828; font-weight: 500;">5</td><td class="r">48</td>
+            <td class="r">29s</td><td class="r" style="color: #888;">12m ago</td>
+          </tr>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/ascend-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l3">L3</span></td>
+            <td class="r"><span class="chip chip-success">90.2%</span></td>
+            <td class="r">46</td><td class="r" style="color: #c62828; font-weight: 500;">5</td><td class="r">51</td>
+            <td class="r">36s</td><td class="r" style="color: #888;">38m ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- L4 Backend Health -->
+    <div class="section-divider"><h3>L4 Backends (merge-gating)</h3></div>
+    <div class="paper">
+      <table class="oot-table">
+        <thead>
+          <tr>
+            <th style="width: 28px;"></th>
+            <th>Backend Repository</th>
+            <th class="c">Level</th>
+            <th class="r">Pass Rate</th>
+            <th class="r">Success</th>
+            <th class="r">Failures</th>
+            <th class="r">Total</th>
+            <th class="r">Avg Duration</th>
+            <th class="r">Last Run</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/cambricon-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l4">L4</span></td>
+            <td class="r"><span class="chip chip-success">96.1%</span></td>
+            <td class="r">49</td><td class="r" style="font-weight: 500;">2</td><td class="r">51</td>
+            <td class="r">33s</td><td class="r" style="color: #888;">5m ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     VIEW 4: CRCR PER-BACKEND — /crcr/[org]/[repo]
-     Fully revamped dashboard with stat pills, GitHub link, commit info,
-     and richer job matrix
-     ═══════════════════════════════════════════════════════════════════════ -->
 
 <script>
 function toggleTheme() { document.body.classList.toggle("dark-mode"); }
