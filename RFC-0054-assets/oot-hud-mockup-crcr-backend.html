@@ -157,6 +157,7 @@ hr { border-color: var(--border-color); }
 .jobHeaderName { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: 400; font-size: 0.8em; }
 .jobHeaderNameBold { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: bold; font-size: 0.8em; }
 .regularHeader { vertical-align: bottom; font-weight: 600; font-size: 0.85em; padding: 4px 6px; }
+.regularCell { padding: 4px 6px; font-size: 0.85em; border-bottom: 1px solid var(--border-color); }
 .jobMetadata a { text-decoration: none; color: var(--link-color); }
 .jobMetadataTruncated {
   vertical-align: top; width: auto; height: 20px; min-width: 0; max-width: 37ch;
@@ -428,420 +429,469 @@ td.jobCell { text-align: center; padding: 2px; }
       <div class="stat-pill"><span class="stat-pill-label">Flaky Jobs</span><span class="stat-pill-value warn">1</span></div>
     </div>
 
-    <div class="section-divider"><h3>PR &times; Job Matrix</h3></div>
-    <p class="subtitle" style="margin-top: 0;">Hover a cell for details. Click to open the downstream workflow run.</p>
-
-    <!-- Revamped table: PR, SHA, Commit, Author, Time + job columns -->
-    <div class="paper" style="overflow-x: auto;">
-      <table class="oot-table" style="white-space: nowrap;">
+    <div style="overflow-x: auto;">
+      <table class="hudTable">
+        <colgroup>
+          <col style="width: 6ch;">
+          <col style="width: 7ch;">
+          <col style="width: 26ch;">
+          <col style="width: 10ch;">
+          <col style="width: 10ch;">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob"><col class="colJob">
+          <col class="colJob">
+        </colgroup>
         <thead>
           <tr>
-            <th>PR</th>
-            <th>SHA</th>
-            <th>Commit</th>
-            <th>Author</th>
-            <th class="r">Time</th>
-            <th class="c">build</th>
-            <th class="c">test-float32</th>
-            <th class="c">test-float16</th>
-            <th class="c">test-bfloat16</th>
-            <th class="c">test-complex</th>
-            <th class="c">test-sparse</th>
-            <th class="c">test-quantized</th>
-            <th class="c">test-distributed</th>
-            <th class="c">test-autograd</th>
-            <th class="c">test-nn</th>
-            <th class="c">lint</th>
+            <th class="regularHeader">Time</th>
+            <th class="regularHeader">SHA</th>
+            <th class="regularHeader">Commit</th>
+            <th class="regularHeader">PR</th>
+            <th class="regularHeader">Author</th>
+            <th class="jobHeader"><div class="jobHeaderName">build</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-float32</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-float16</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-bfloat16</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-complex</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-sparse</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-quantized</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-distributed</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-autograd</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">test-nn</div></th>
+            <th class="jobHeader"><div class="jobHeaderName">lint</div></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><a href="#" onclick="window.location.href='oot-hud-mockup-pr.html'; return false;">#183512</a></td>
-            <td class="mono">a1b2c3d</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Improve conv2d backward pass perf</a></td>
-            <td><a href="#">contributor42</a></td>
-            <td class="r" style="color: #888;">3m ago</td>
-            <td class="c has-tooltip"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer;">success</span><div class="tt">build &mdash; success
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">3m ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">a1b2c3d</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="oot-hud-mockup-pr.html">Improve conv2d backward pass perf</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="oot-hud-mockup-pr.html">#183512</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">contributor42</a></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">build — success
 Duration: 2m 14s
 Queue: 8.2s</div></td>
-            <td class="c has-tooltip"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer;">success</span><div class="tt">test-float32 &mdash; success
+            <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">test-float32 — success
 Duration: 18m 32s
 Tests: 1240/1240 passed
 Queue: 12.3s</div></td>
-            <td class="c has-tooltip"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer;">failure</span><div class="tt">test-float16 &mdash; failure
+            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">test-float16 — failure
 Duration: 12m 5s
 Tests: 1180/1210 passed (30 failed)
 Queue: 11.8s</div></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c has-tooltip"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer;">running</span><div class="tt">test-quantized &mdash; running
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">test-quantized — running
 Queue: 14.1s</div></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183498</a></td><td class="mono">e4f5a6b</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Fix memory leak in autograd engine</a></td>
-            <td><a href="#">pytorchbot</a></td><td class="r" style="color: #888;">18m ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">18m ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">e4f5a6b</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Fix memory leak in autograd engine</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183498</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">pytorchbot</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183475</a></td><td class="mono">c7d8e9f</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[dynamo] Add support for torch.vmap</a></td>
-            <td><a href="#">dynamodev</a></td><td class="r" style="color: #888;">42m ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">42m ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">c7d8e9f</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[dynamo] Add support for torch.vmap</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183475</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">dynamodev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183460</a></td><td class="mono">f0a1b2c</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Refactor inductor scheduler pass</a></td>
-            <td><a href="#">inductor_fan</a></td><td class="r" style="color: #888;">1h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c has-tooltip"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer;">failure</span><div class="tt">test-float32 &mdash; failure
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">1h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">f0a1b2c</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Refactor inductor scheduler pass</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183460</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">inductor_fan</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">test-float32 — failure
 Duration: 15m 11s
 Tests: 1201/1240 passed (39 failed)
 Queue: 9.4s</div></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c has-tooltip"><span class="chip chip-warning" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer;">cancelled</span><div class="tt">test-sparse &mdash; cancelled
-Duration: 0s
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-cancelled">X</span><div class="tt">test-sparse — cancelled
 Cancelled after build failure</div></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183441</a></td><td class="mono">d3e4f5a</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Update FBGEMM to latest nightly</a></td>
-            <td><a href="#">fbgemmbot</a></td><td class="r" style="color: #888;">1h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">1h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">d3e4f5a</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Update FBGEMM to latest nightly</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183441</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">fbgemmbot</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183420</a></td><td class="mono">b6c7d8e</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Enable flex attention for inference</a></td>
-            <td><a href="#">attndev</a></td><td class="r" style="color: #888;">2h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">2h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">b6c7d8e</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Enable flex attention for inference</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183420</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">attndev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183398</a></td><td class="mono">e9f0a1b</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[compile] Graph break on side effects</a></td>
-            <td><a href="#">compiledev</a></td><td class="r" style="color: #888;">3h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">3h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">e9f0a1b</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[compile] Graph break on side effects</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183398</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">compiledev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183380</a></td><td class="mono">a2b3c4d</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Optimize batch norm backward CUDA</a></td>
-            <td><a href="#">cudadev</a></td><td class="r" style="color: #888;">5h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c has-tooltip"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px; cursor: pointer; border: 1px dashed #8bc34a;">flaky</span><div class="tt">test-float32 &mdash; success (flaky)
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">5h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">a2b3c4d</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Optimize batch norm backward CUDA</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183380</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">cudadev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell has-tooltip"><span class="conclusion c-flaky">O</span><div class="tt">test-float32 — success (flaky)
 Attempt 2 of 2
 Duration: 19m 44s
 Tests: 1240/1240 passed
 Queue: 10.1s</div></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183362</a></td><td class="mono">a2b3c4d</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Optimize batch norm backward CUDA</a></td>
-            <td><a href="#">cudadev</a></td><td class="r" style="color: #888;">3h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">3h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">a2b3c4d</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Optimize batch norm backward CUDA</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183362</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">cudadev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183341</a></td><td class="mono">b4c5d6e</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[export] Fix dynamic shapes serial</a></td>
-            <td><a href="#">exportdev</a></td><td class="r" style="color: #888;">4h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">4h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">b4c5d6e</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[export] Fix dynamic shapes serial</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183341</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">exportdev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183320</a></td><td class="mono">c6d7e8f</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Add torch.linalg.svdvals decomp</a></td>
-            <td><a href="#">linalgfan</a></td><td class="r" style="color: #888;">5h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">5h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">c6d7e8f</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Add torch.linalg.svdvals decomp</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183320</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">linalgfan</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183301</a></td><td class="mono">d7e8f9a</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[distributed] Fix NCCL timeout</a></td>
-            <td><a href="#">nccldev</a></td><td class="r" style="color: #888;">5h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">5h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">d7e8f9a</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[distributed] Fix NCCL timeout</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183301</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">nccldev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183288</a></td><td class="mono">e8f9a0b</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Upgrade cuDNN to 9.1</a></td>
-            <td><a href="#">cudnnbot</a></td><td class="r" style="color: #888;">6h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">6h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">e8f9a0b</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Upgrade cuDNN to 9.1</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183288</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">cudnnbot</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183275</a></td><td class="mono">f9a0b1c</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[quantize] Add int4 weight-only</a></td>
-            <td><a href="#">quantdev</a></td><td class="r" style="color: #888;">6h ago</td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">6h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">f9a0b1c</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[quantize] Add int4 weight-only</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183275</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">quantdev</a></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183260</a></td><td class="mono">a0b1c2d</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Fix flaky test_matmul on ROCm</a></td>
-            <td><a href="#">rocmfix</a></td><td class="r" style="color: #888;">7h ago</td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">7h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">a0b1c2d</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Fix flaky test_matmul on ROCm</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183260</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">rocmfix</a></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183248</a></td><td class="mono">b1c2d3e</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[PT2] Support custom triton ops</a></td>
-            <td><a href="#">tritondev</a></td><td class="r" style="color: #888;">7h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">7h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">b1c2d3e</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[PT2] Support custom triton ops</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183248</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">tritondev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183235</a></td><td class="mono">c2d3e4f</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Deprecate torch.cuda.amp autocast</a></td>
-            <td><a href="#">ampdev</a></td><td class="r" style="color: #888;">8h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">8h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">c2d3e4f</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Deprecate torch.cuda.amp autocast</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183235</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">ampdev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183220</a></td><td class="mono">d3e4f5a</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[MPS] Add conv3d backward kernel</a></td>
-            <td><a href="#">mpsdev</a></td><td class="r" style="color: #888;">8h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">8h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">d3e4f5a</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[MPS] Add conv3d backward kernel</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183220</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">mpsdev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183208</a></td><td class="mono">e4f5a6b</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Update XLA pin to latest release</a></td>
-            <td><a href="#">xlabot</a></td><td class="r" style="color: #888;">9h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">9h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">e4f5a6b</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Update XLA pin to latest release</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183208</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">xlabot</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183195</a></td><td class="mono">f5a6b7c</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[dynamo] Inline closures in graph</a></td>
-            <td><a href="#">dynamodev2</a></td><td class="r" style="color: #888;">9h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">9h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">f5a6b7c</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[dynamo] Inline closures in graph</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183195</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">dynamodev2</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183180</a></td><td class="mono">a6b7c8d</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Fix autograd saved tensor hooks</a></td>
-            <td><a href="#">agdev</a></td><td class="r" style="color: #888;">10h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">10h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">a6b7c8d</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Fix autograd saved tensor hooks</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183180</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">agdev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183168</a></td><td class="mono">b7c8d9e</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">[inductor] Vectorize reduction</a></td>
-            <td><a href="#">vecdev</a></td><td class="r" style="color: #888;">10h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">10h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">b7c8d9e</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">[inductor] Vectorize reduction</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183168</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">vecdev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
           </tr>
           <tr>
-            <td><a href="#">#183155</a></td><td class="mono">c8d9e0f</td>
-            <td style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis;"><a href="#">Add support for structured sparsity</a></td>
-            <td><a href="#">sparsedev</a></td><td class="r" style="color: #888;">11h ago</td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-error" style="font-size: 0.75rem; padding: 1px 8px;">failure</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-info" style="font-size: 0.75rem; padding: 1px 8px;">running</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
-            <td class="c"><span class="chip chip-success" style="font-size: 0.75rem; padding: 1px 8px;">success</span></td>
+            <td class="regularCell" style="white-space: nowrap; font-size: 0.8rem; color: #888;">11h ago</td>
+            <td class="regularCell" style="font-family: monospace; font-size: 0.75rem;">c8d9e0f</td>
+            <td class="regularCell" style="max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="#">Add support for structured sparsity</a></td>
+            <td class="regularCell" style="white-space: nowrap;"><a href="#">#183155</a></td>
+            <td class="regularCell" style="font-size: 0.8rem;"><a href="#">sparsedev</a></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-pending">?</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell"><span class="conclusion c-success">O</span></td>
           </tr>
         </tbody>
       </table>
