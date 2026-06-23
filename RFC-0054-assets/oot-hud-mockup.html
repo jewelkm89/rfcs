@@ -420,11 +420,40 @@ td.jobCell { text-align: center; padding: 2px; }
     </div>
 
     <!-- Settings panel (hidden by default) -->
-    <div id="settingsPanel" style="display: none; background: var(--commit-message-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px 16px; margin-bottom: 1rem; max-width: 420px;">
-      <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">Settings</div>
-      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
-        <input type="checkbox" checked onchange="toggleCrcrL3(this)">
+    <div id="settingsPanel" style="display: none; background: #1e1e1e; border: 1px solid #444; border-radius: 6px; padding: 16px 20px; margin-bottom: 1rem; max-width: 320px; color: #e0e0e0; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 10px; color: #ccc;">View Options</div>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" checked style="accent-color: #4a9eff;">
+        Use grouped view
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 14px;">
+        <input type="checkbox" style="accent-color: #4a9eff;">
+        Monsterize failures
+      </label>
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 10px; color: #ccc;">Filter Options</div>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" checked style="accent-color: #4a9eff;">
+        Hide unstable jobs
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" style="accent-color: #4a9eff;">
+        Hide green columns
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" checked onchange="toggleCrcrL3(this)" style="accent-color: #4a9eff;">
         Hide non-viable-strict jobs
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" checked style="accent-color: #4a9eff;">
+        Hide always-skipped jobs
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" checked style="accent-color: #4a9eff;">
+        Condense LF, ephemeral jobs
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+        <input type="checkbox" style="accent-color: #4a9eff;">
+        Condense OSDC, non-OSDC jobs
       </label>
     </div>
 
