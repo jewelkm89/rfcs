@@ -52,29 +52,30 @@
   --info-button-text: white;
 }
 .dark-mode {
-  --background-color: #1e1e1e;
-  --text-color: #e0e0e0;
-  --link-color: #4a90e2;
-  --navbar-bg: linear-gradient(326deg, rgba(42,42,42,0.8), rgba(45,45,45,0.8));
-  --navbar-shadow: 0 -4px 20px 0px rgba(0,0,0,0.4);
-  --dropdown-bg: #2a2a2a;
-  --code-bg: #2a2a2a;
-  --icon-color: #e0e0e0;
-  --dropdown-shadow: 0 -4px 20px 0px rgba(0,0,0,0.3);
-  --button-color: #e0e0e0;
+  --background-color: #131318;
+  --text-color: #c8c8cc;
+  --link-color: #5b9bd5;
+  --navbar-bg: linear-gradient(326deg, rgba(30,30,35,0.95), rgba(35,35,40,0.95));
+  --navbar-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  --dropdown-bg: #1a1a1f;
+  --code-bg: #1a1a1f;
+  --icon-color: #c8c8cc;
+  --dropdown-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  --button-color: #c8c8cc;
   --button-bg: transparent;
-  --border-color: #3a3a3a;
-  --table-border-color: rgba(255,255,255,0.3);
-  --table-row-odd-bg: #2a2a2a;
-  --table-row-even-bg: rgba(125,125,125,0.1);
-  --workflow-box-none-bg: #383838;
-  --workflow-box-fail-bg: #4b2c2c;
-  --workflow-box-pending-bg: #0c232d;
-  --workflow-box-success-bg: #0d3010;
-  --tooltip-bg: #3a3a3a;
-  --tooltip-pinned-bg: #1e4555;
-  --tooltip-text: #e0e0e0;
-  --sev-banner-bg: #4b2c2c;
+  --border-color: #2a2a30;
+  --table-border-color: #2a2a30;
+  --table-row-odd-bg: #16161b;
+  --table-row-even-bg: #131318;
+  --commit-message-bg: #1a1a1f;
+  --workflow-box-none-bg: #2a2a30;
+  --workflow-box-fail-bg: #3a1c1c;
+  --workflow-box-pending-bg: #0c1d28;
+  --workflow-box-success-bg: #0d2810;
+  --tooltip-bg: #252530;
+  --tooltip-pinned-bg: #1e3545;
+  --tooltip-text: #c8c8cc;
+  --sev-banner-bg: #3a1c1c;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -109,8 +110,9 @@ input, select {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 select option { background-color: var(--dropdown-bg); color: var(--text-color); }
-table { border-collapse: collapse; border-color: var(--border-color); color: var(--text-color); background-color: var(--dropdown-bg); }
-th, td { border-color: var(--border-color); padding: 1px 3px; }
+table { border-collapse: collapse; border-color: var(--border-color); color: var(--text-color); background-color: transparent; }
+th, td { border: none; border-bottom: 1px solid var(--border-color); padding: 1px 3px; }
+thead th { border-bottom: 1px solid var(--border-color); }
 hr { border-color: var(--border-color); }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -119,14 +121,14 @@ hr { border-color: var(--border-color); }
 .navbar {
   display: flex; padding: 0 clamp(0.5rem, 1vw, 1rem);
   background: var(--navbar-bg); box-shadow: var(--navbar-shadow);
-  width: 100%; min-height: 60px; align-items: center;
+  width: 100%; min-height: 40px; align-items: center;
   position: relative; z-index: 1300;
   backdrop-filter: blur(1px); -webkit-backdrop-filter: blur(1px);
   flex-wrap: wrap; gap: clamp(0.5rem, 2vw, 1.5rem);
-  font-size: clamp(14px, 1vw, 16px);
+  font-size: 13px;
 }
 .navbar li {
-  padding: clamp(0.5rem, 0.8vw, 0.7rem) clamp(0.6rem, 1vw, 0.8rem);
+  padding: 6px clamp(0.6rem, 1vw, 0.8rem);
   position: relative; display: flex; align-items: center;
 }
 .navbar ul { list-style: none; margin: 0; padding: 0; }
@@ -147,7 +149,9 @@ hr { border-color: var(--border-color); }
 /* ═══════════════════════════════════════════════════════════════════════
    HUD Table — from hud.module.css
    ═══════════════════════════════════════════════════════════════════════ */
-.hudTable { table-layout: fixed; border-collapse: collapse; width: max-content; line-height: 1; }
+.hudTable { table-layout: fixed; border-collapse: collapse; width: max-content; line-height: 1; background: transparent; }
+.hudTable tbody tr:nth-child(odd) { background: var(--table-row-odd-bg); }
+.hudTable tbody tr:nth-child(even) { background: var(--table-row-even-bg); }
 .colTime { width: 14ch; }
 .colSha { width: 8ch; }
 .colCommit { width: 40ch; }
@@ -155,21 +159,25 @@ hr { border-color: var(--border-color); }
 .colAuthor { width: 12ch; }
 .colJob { width: 2ch; min-width: 14px; }
 .jobHeader { font-family: sans-serif; height: 150px; white-space: nowrap; padding-right: 4px; }
-.jobHeaderName { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: 400; font-size: 0.8em; }
-.jobHeaderNameBold { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: bold; font-size: 0.8em; }
-.regularHeader { vertical-align: bottom; font-weight: 600; font-size: 0.85em; padding: 4px 6px; }
+.jobHeaderName { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: 400; font-size: 11px; color: #888; }
+.jobHeaderNameBold { transform: translate(5px, 60px) rotate(315deg); width: 12px; font-weight: bold; font-size: 11px; }
+.regularHeader { vertical-align: bottom; font-weight: 600; font-size: 12px; padding: 4px 6px; color: #888; }
 .jobMetadata a { text-decoration: none; color: var(--link-color); }
 .jobMetadataTruncated {
   vertical-align: top; width: auto; height: 20px; min-width: 0; max-width: 37ch;
   display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   border-radius: 2px; padding: 0 2px;
 }
+.jobMetadataTruncated a { color: #4caf50 !important; }
 .jobMetadataTruncatedAuthor {
   vertical-align: top; width: auto; height: 20px; min-width: 0; max-width: 12ch;
   display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   border-radius: 2px; padding: 0 2px;
 }
-td.jobMetadata { vertical-align: top; padding: 2px 4px; white-space: nowrap; font-size: 0.85em; }
+td.jobMetadata { vertical-align: top; padding: 2px 4px; white-space: nowrap; font-size: 12px; }
+.pr-link { padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+.pr-green { background: #1b5e20; color: #a5d6a7 !important; }
+.pr-yellow { background: #6d4c00; color: #ffd54f !important; }
 td.jobCell { text-align: center; padding: 2px; }
 .center { text-align: center; }
 .highlight { background-color: var(--highlight-bg); }
@@ -404,7 +412,7 @@ td.jobCell { text-align: center; padding: 2px; }
     <!-- SEV banner -->
     <div style="background: var(--sev-banner-bg); border: 1px solid #d32f2f; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
       <span style="color: #d32f2f; font-weight: 600;">SEV:</span>
-      <span>[ROCm] MI350 CI jobs will have longer queue times due to CI migration (<a href="#" style="color: var(--link-color);">#187193</a>)</span>
+      <span>[ROCm] MI350 CI jobs will have longer queue times due to CI migration (<a class="pr-link pr-green" href="#" style="color: var(--link-color);">#187193</a>)</span>
     </div>
 
     <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 4px;">
@@ -465,6 +473,10 @@ td.jobCell { text-align: center; padding: 2px; }
       </label>
         </div>
       </div>
+      <div style="margin-left: auto; display: flex; gap: 0;">
+        <button style="padding: 4px 14px; font-size: 12px; font-weight: 600; border: 1px solid #2563eb; border-radius: 3px 0 0 3px; background: #2563eb; color: #fff; cursor: pointer;">HUD</button>
+        <button style="padding: 4px 14px; font-size: 12px; font-weight: 600; border: 1px solid var(--border-color); border-radius: 0 3px 3px 0; background: var(--button-bg); color: var(--text-color); cursor: pointer;">Autorevert</button>
+      </div>
     </div>
 
     <div style="overflow-x: auto;">
@@ -517,7 +529,7 @@ td.jobCell { text-align: center; padding: 2px; }
             <td class="jobMetadata">3 min ago</td>
             <td class="jobMetadata"><a href="#">a1b2c3d</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Improve conv2d backward pass performance</a></div></td>
-            <td class="jobMetadata"><a href="#" onclick="window.location.href='oot-hud-mockup-pr.html'; return false;">#183512</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#" onclick="window.location.href='oot-hud-mockup-pr.html'; return false;">#183512</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">contributor42</a></div></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">linux: 8/8 passed</div></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">win: 1/2 complete</div></td>
@@ -560,7 +572,7 @@ Duration: 1m 52s</div></td>
             <td class="jobMetadata">18 min ago</td>
             <td class="jobMetadata"><a href="#">e4f5a6b</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Fix memory leak in autograd engine</a></div></td>
-            <td class="jobMetadata"><a href="#">#183498</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183498</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">pytorchbot</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -574,7 +586,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">42 min ago</td>
             <td class="jobMetadata"><a href="#">c7d8e9f</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[dynamo] Add support for torch.vmap</a></div></td>
-            <td class="jobMetadata"><a href="#">#183475</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183475</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">dynamodev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -588,7 +600,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">1 hr ago</td>
             <td class="jobMetadata"><a href="#">f0a1b2c</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Refactor inductor scheduler pass</a></div></td>
-            <td class="jobMetadata"><a href="#">#183460</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-yellow" href="#">#183460</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">inductor_fan</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -605,7 +617,7 @@ Tests: 890/1210 passed</div></td>
             <td class="jobMetadata">2 hr ago</td>
             <td class="jobMetadata"><a href="#">b6c7d8e</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Enable flex attention for inference</a></div></td>
-            <td class="jobMetadata"><a href="#">#183420</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183420</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">attndev</a></div></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -626,7 +638,7 @@ Tests: 310/380 passed</div></td>
             <td class="jobMetadata">2 hr ago</td>
             <td class="jobMetadata"><a href="#">d3e4f5a</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Update FBGEMM to latest nightly</a></div></td>
-            <td class="jobMetadata"><a href="#">#183398</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183398</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">fbgemmbot</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -641,7 +653,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">3 hr ago</td>
             <td class="jobMetadata"><a href="#">e9f0a1b</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[compile] Graph break on side effects</a></div></td>
-            <td class="jobMetadata"><a href="#">#183380</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183380</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">compiledev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -656,7 +668,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">3 hr ago</td>
             <td class="jobMetadata"><a href="#">a2b3c4d</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Optimize batch norm backward CUDA</a></div></td>
-            <td class="jobMetadata"><a href="#">#183362</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-yellow" href="#">#183362</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">cudadev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -675,7 +687,7 @@ Tests: 298/380 passed</div></td>
             <td class="jobMetadata">4 hr ago</td>
             <td class="jobMetadata"><a href="#">b4c5d6e</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[export] Fix dynamic shapes serialization</a></div></td>
-            <td class="jobMetadata"><a href="#">#183341</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183341</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">exportdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -690,7 +702,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">5 hr ago</td>
             <td class="jobMetadata"><a href="#">c6d7e8f</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Add torch.linalg.svdvals decomposition</a></div></td>
-            <td class="jobMetadata"><a href="#">#183320</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183320</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">linalgfan</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -704,7 +716,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">5h ago</td>
             <td class="jobMetadata"><a href="#">d7e8f9a</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[distributed] Fix NCCL timeout handling</a></div></td>
-            <td class="jobMetadata"><a href="#">#183301</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-yellow" href="#">#183301</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">nccldev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td>
@@ -715,7 +727,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">6h ago</td>
             <td class="jobMetadata"><a href="#">e8f9a0b</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Upgrade cuDNN to 9.1</a></div></td>
-            <td class="jobMetadata"><a href="#">#183288</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183288</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">cudnnbot</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -726,7 +738,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">6h ago</td>
             <td class="jobMetadata"><a href="#">f9a0b1c</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[quantize] Add int4 weight-only quant</a></div></td>
-            <td class="jobMetadata"><a href="#">#183275</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-yellow" href="#">#183275</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">quantdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
@@ -737,7 +749,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">7h ago</td>
             <td class="jobMetadata"><a href="#">a0b1c2d</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Fix flaky test_matmul on ROCm</a></div></td>
-            <td class="jobMetadata"><a href="#">#183260</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183260</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">rocmfix</a></div></td>
             <td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td>
@@ -748,7 +760,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">7h ago</td>
             <td class="jobMetadata"><a href="#">b1c2d3e</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[PT2] Support custom triton ops</a></div></td>
-            <td class="jobMetadata"><a href="#">#183248</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-yellow" href="#">#183248</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">tritondev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -759,7 +771,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">8h ago</td>
             <td class="jobMetadata"><a href="#">c2d3e4f</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Deprecate torch.cuda.amp autocast</a></div></td>
-            <td class="jobMetadata"><a href="#">#183235</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183235</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">ampdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td>
@@ -770,7 +782,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">8h ago</td>
             <td class="jobMetadata"><a href="#">d3e4f5a</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[MPS] Add conv3d backward kernel</a></div></td>
-            <td class="jobMetadata"><a href="#">#183220</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-yellow" href="#">#183220</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">mpsdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -781,7 +793,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">9h ago</td>
             <td class="jobMetadata"><a href="#">e4f5a6b</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Update XLA pin to latest release</a></div></td>
-            <td class="jobMetadata"><a href="#">#183208</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183208</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">xlabot</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -792,7 +804,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">9h ago</td>
             <td class="jobMetadata"><a href="#">f5a6b7c</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[dynamo] Inline closures in graph</a></div></td>
-            <td class="jobMetadata"><a href="#">#183195</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183195</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">dynamodev2</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -803,7 +815,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">10h ago</td>
             <td class="jobMetadata"><a href="#">a6b7c8d</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Fix autograd saved tensor hooks</a></div></td>
-            <td class="jobMetadata"><a href="#">#183180</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183180</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">agdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -814,7 +826,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">10h ago</td>
             <td class="jobMetadata"><a href="#">b7c8d9e</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[inductor] Vectorize reduction ops</a></div></td>
-            <td class="jobMetadata"><a href="#">#183168</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183168</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">vecdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -825,7 +837,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">11h ago</td>
             <td class="jobMetadata"><a href="#">c8d9e0f</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Add support for structured sparsity</a></div></td>
-            <td class="jobMetadata"><a href="#">#183155</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183155</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">sparsedev</a></div></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td>
@@ -836,7 +848,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">11h ago</td>
             <td class="jobMetadata"><a href="#">d9e0f1a</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[CI] Pin nightly CUDA toolkit version</a></div></td>
-            <td class="jobMetadata"><a href="#">#183140</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183140</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">cibot</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -847,7 +859,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">12h ago</td>
             <td class="jobMetadata"><a href="#">e0f1a2b</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">Improve TorchScript type inference</a></div></td>
-            <td class="jobMetadata"><a href="#">#183128</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183128</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">tsdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -858,7 +870,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobMetadata">12h ago</td>
             <td class="jobMetadata"><a href="#">f1a2b3c</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncated"><a href="#">[fx] Add pattern matcher for concat</a></div></td>
-            <td class="jobMetadata"><a href="#">#183115</a></td>
+            <td class="jobMetadata"><a class="pr-link pr-green" href="#">#183115</a></td>
             <td class="jobMetadata"><div class="jobMetadataTruncatedAuthor"><a href="#">fxdev</a></div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
@@ -869,8 +881,8 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
       </table>
     </div>
 
-    <div style="margin-top: 8px;">Page 1: Prev | <a href="#">Next</a></div>
-    <br><div><em>This page automatically updates.</em></div>
+    <div style="margin-top: 8px; font-size: 12px; color: #888;">Page 1: <span style="color: #555;">Prev</span> | <a href="#" style="color: var(--link-color);">Next</a></div>
+    <div style="margin-top: 8px; font-size: 11px; color: #666; font-style: italic;">This page automatically updates.</div>
   </div>
 </div>
 
