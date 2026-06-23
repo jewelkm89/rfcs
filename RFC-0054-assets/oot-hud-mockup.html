@@ -325,6 +325,8 @@ td.jobCell { text-align: center; padding: 2px; }
 /* CRCR expandable group columns on HUD homepage */
 .crcr-sub { display: none; }
 .crcr-expanded .crcr-sub { display: table-cell; }
+.crcr-expanded .crcr-sub.crcr-l3 { display: none; }
+.crcr-expanded.crcr-show-l3 .crcr-sub.crcr-l3 { display: table-cell; }
 .crcr-group-header { cursor: pointer; }
 .crcr-group-header .jobHeaderNameBold { color: #0288d1; }
 
@@ -411,10 +413,26 @@ td.jobCell { text-align: center; padding: 2px; }
       <form style="display: inline;" onsubmit="return false;">
         <input type="text" placeholder="Filter job name" style="padding: 4px 8px; font-size: 13px; width: 200px;" value="">
       </form>
-      <button class="settingsButton">
+      <button class="settingsButton" onclick="toggleSettingsPanel()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
         Settings
       </button>
+    </div>
+
+    <!-- Settings panel (hidden by default) -->
+    <div id="settingsPanel" style="display: none; background: var(--commit-message-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px 16px; margin-bottom: 1rem; max-width: 420px;">
+      <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">Settings</div>
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; margin-bottom: 6px;">
+        <input type="checkbox" checked disabled>
+        Hide non-viable-strict jobs
+      </label>
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+        <input type="checkbox" checked onchange="toggleCrcrL3(this)">
+        Hide non-blocking CRCR backends (L3)
+      </label>
+      <div style="font-size: 11px; color: #666; margin-top: 4px; margin-left: 24px;">
+        When checked, only L4 (blocking) backends are shown in the CRCR columns. Uncheck to also show L3 (non-blocking) backends.
+      </div>
     </div>
 
     <div style="overflow-x: auto;">
@@ -455,10 +473,10 @@ td.jobCell { text-align: center; padding: 2px; }
             <th class="jobHeader"><div class="jobHeaderName">trunk / linux-focal-py3.11 / test</div></th>
             <!-- CRCR: collapsed group header + expandable sub-columns -->
             <th class="jobHeader crcr-group-header" onclick="toggleCrcr()"><div class="jobHeaderNameBold" style="color: #0288d1;">CRCR &#9656;</div></th>
-            <th class="jobHeader crcr-sub"><div class="jobHeaderName">intel / build (L3)</div></th>
-            <th class="jobHeader crcr-sub"><div class="jobHeaderName">intel / test-xpu (L3)</div></th>
-            <th class="jobHeader crcr-sub"><div class="jobHeaderName">ascend / build (L3)</div></th>
-            <th class="jobHeader crcr-sub"><div class="jobHeaderName">ascend / test-npu (L3)</div></th>
+            <th class="jobHeader crcr-sub crcr-l3"><div class="jobHeaderName">intel / build (L3)</div></th>
+            <th class="jobHeader crcr-sub crcr-l3"><div class="jobHeaderName">intel / test-xpu (L3)</div></th>
+            <th class="jobHeader crcr-sub crcr-l3"><div class="jobHeaderName">ascend / build (L3)</div></th>
+            <th class="jobHeader crcr-sub crcr-l3"><div class="jobHeaderName">ascend / test-npu (L3)</div></th>
             <th class="jobHeader crcr-sub"><div class="jobHeaderName">cambricon / build (L4)</div></th>
           </tr>
         </thead>
@@ -495,13 +513,13 @@ Duration: 45m 12s</div></td>
 intel [L3]: 1/2 (1 running)
 ascend [L3]: 1/2 (1 running)
 cambricon [L4]: 1/1 passed</div></td>
-            <td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-success">O</span><div class="tt">intel / build [L3] &mdash; success
+            <td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-success">O</span><div class="tt">intel / build [L3] &mdash; success
 Duration: 2m 14s</div></td>
-            <td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">intel / test-xpu [L3] &mdash; running
+            <td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">intel / test-xpu [L3] &mdash; running
 Queue: 8.2s</div></td>
-            <td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-success">O</span><div class="tt">ascend / build [L3] &mdash; success
+            <td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-success">O</span><div class="tt">ascend / build [L3] &mdash; success
 Duration: 3m 5s</div></td>
-            <td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">ascend / test-npu [L3] &mdash; running
+            <td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">ascend / test-npu [L3] &mdash; running
 Queue: 11.3s</div></td>
             <td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-success">O</span><div class="tt">cambricon / build [L4] &mdash; success
 Duration: 1m 52s</div></td>
@@ -516,8 +534,8 @@ Duration: 1m 52s</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5/5 passed
 intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
@@ -530,8 +548,8 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5/5 passed
 intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
@@ -545,10 +563,10 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 4/5 passed, 1 failed
 intel [L3]: 1/2 (test-xpu failed)
 ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel / test-xpu [L3] &mdash; failure
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel / test-xpu [L3] &mdash; failure
 Duration: 14m 3s
 Tests: 890/1210 passed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
@@ -563,10 +581,10 @@ Tests: 890/1210 passed</div></td>
 intel [L3]: 1/2 (test-xpu failed)
 ascend [L3]: 1/2 (test-npu failed)
 cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel / test-xpu [L3] &mdash; failure
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">intel / test-xpu [L3] &mdash; failure
 Duration: 11m 48s
 Tests: 920/1210 passed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">ascend / test-npu [L3] &mdash; failure
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">ascend / test-npu [L3] &mdash; failure
 Duration: 8m 22s
 Tests: 310/380 passed</div></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
@@ -582,8 +600,8 @@ Tests: 310/380 passed</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5/5 passed
 intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <!-- Row 7 -->
@@ -597,8 +615,8 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5/5 passed
 intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <!-- Row 8 -->
@@ -614,8 +632,8 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
 intel [L3]: 2/2
 ascend [L3]: 1/2 (test-npu failed)
 cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">ascend / test-npu [L3] &mdash; failure
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3 has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">ascend / test-npu [L3] &mdash; failure
 Duration: 9m 11s
 Tests: 298/380 passed</div></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
@@ -631,8 +649,8 @@ Tests: 298/380 passed</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5/5 passed
 intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <!-- Row 10 -->
@@ -646,8 +664,8 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5/5 passed
 intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td>
             <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
@@ -659,7 +677,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">CRCR: 3 passed, 2 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">6h ago</td>
@@ -670,7 +688,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 3 passed, 2 failed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">6h ago</td>
@@ -681,7 +699,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 3 passed, 2 failed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">7h ago</td>
@@ -692,7 +710,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">CRCR: 4 passed, 1 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">7h ago</td>
@@ -703,7 +721,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 2 passed, 3 failed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">8h ago</td>
@@ -714,7 +732,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 4 passed, 1 failed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">8h ago</td>
@@ -725,7 +743,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 3 passed, 1 failed, 1 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">9h ago</td>
@@ -736,7 +754,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 3 passed, 2 failed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">9h ago</td>
@@ -747,7 +765,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5 passed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">10h ago</td>
@@ -758,7 +776,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">CRCR: 4 passed, 1 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">10h ago</td>
@@ -769,7 +787,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 3 passed, 1 failed, 1 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">11h ago</td>
@@ -780,7 +798,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 1 passed, 2 failed, 2 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">11h ago</td>
@@ -791,7 +809,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-failure">X</span><div class="tt">CRCR: 3 passed, 1 failed, 1 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-failure">X</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">12h ago</td>
@@ -802,7 +820,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-none">~</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-failure">X</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-pending">?</span><div class="tt">CRCR: 4 passed, 1 running</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-pending">?</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
           <tr>
             <td class="jobMetadata">12h ago</td>
@@ -813,7 +831,7 @@ intel [L3]: 2/2, ascend [L3]: 2/2, cambricon [L4]: 1/1</div></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-pending">?</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-flaky">F</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td><td class="jobCell"><span class="conclusion c-success">O</span></td>
             <td class="jobCell has-tooltip"><span class="conclusion c-success">O</span><div class="tt">CRCR: 5 passed</div></td>
-            <td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
+            <td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub crcr-l3"><span class="conclusion c-success">O</span></td><td class="jobCell crcr-sub"><span class="conclusion c-success">O</span></td>
           </tr>
         </tbody>
       </table>
@@ -839,6 +857,18 @@ function toggleCrcr() {
   } else {
     hdr.innerHTML = 'CRCR &#9656;';
   }
+}
+function toggleCrcrL3(checkbox) {
+  var table = document.querySelector('.hudTable');
+  if (checkbox.checked) {
+    table.classList.remove('crcr-show-l3');
+  } else {
+    table.classList.add('crcr-show-l3');
+  }
+}
+function toggleSettingsPanel() {
+  var panel = document.getElementById('settingsPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 </script>
 
