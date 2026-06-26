@@ -412,7 +412,7 @@ td.jobCell { text-align: center; padding: 2px; }
       <div class="stat-card">
         <span class="stat-label">Registered Repos</span>
         <span class="stat-value">6</span>
-        <span class="stat-sub">across 3 levels (L2/L3/L4) + 3 L1</span>
+        <span class="stat-sub">across 3 levels (L4/L3/L2) + 3 L1</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Overall Pass Rate</span>
@@ -431,24 +431,71 @@ td.jobCell { text-align: center; padding: 2px; }
       </div>
     </div>
 
-    <!-- L1 Integrations -->
-    <div class="section-divider"><h3>L1 Integrations (webhook-only)</h3></div>
-    <div style="margin-bottom: 20px; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--dropdown-bg);">
-      <p style="font-size: 0.8rem; color: #888; margin: 0 0 8px;">These repos receive webhook notifications on new commits. No CI results are reported back.</p>
-      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
-          <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
-          qualcomm/ai-engine-pytorch
-        </a>
-        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
-          <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
-          graphcore/poptorch
-        </a>
-        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
-          <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
-          habana/habana-pytorch
-        </a>
-      </div>
+    <!-- L4 Backend Health -->
+    <div class="section-divider"><h3>L4 Backends (merge-gating)</h3></div>
+    <div class="paper">
+      <table class="oot-table">
+        <thead>
+          <tr>
+            <th style="width: 28px;"></th>
+            <th>Backend Repository</th>
+            <th class="c">Level</th>
+            <th class="r">Pass Rate</th>
+            <th class="r">Success</th>
+            <th class="r">Failures</th>
+            <th class="r">Total</th>
+            <th class="r">Avg Duration</th>
+            <th class="r">Last Run</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/cambricon-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l4">L4</span></td>
+            <td class="r"><span class="chip chip-success">96.1%</span></td>
+            <td class="r">49</td><td class="r" style="font-weight: 500;">2</td><td class="r">51</td>
+            <td class="r">33s</td><td class="r" style="color: #888;">5m ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- L3 Backend Health -->
+    <div class="section-divider"><h3>L3 Backends (check runs on PR)</h3></div>
+    <div class="paper" style="margin-bottom: 20px;">
+      <table class="oot-table">
+        <thead>
+          <tr>
+            <th style="width: 28px;"></th>
+            <th>Backend Repository</th>
+            <th class="c">Level</th>
+            <th class="r">Pass Rate</th>
+            <th class="r">Success</th>
+            <th class="r">Failures</th>
+            <th class="r">Total</th>
+            <th class="r">Avg Duration</th>
+            <th class="r">Last Run</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">intel/intel-extension-for-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l3">L3</span></td>
+            <td class="r"><span class="chip chip-success">89.6%</span></td>
+            <td class="r">43</td><td class="r" style="color: #c62828; font-weight: 500;">5</td><td class="r">48</td>
+            <td class="r">29s</td><td class="r" style="color: #888;">12m ago</td>
+          </tr>
+          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
+            <td class="c"><span class="status-dot active" title="Active"></span></td>
+            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/ascend-pytorch</a></td>
+            <td class="c"><span class="chip chip-outlined level-l3">L3</span></td>
+            <td class="r"><span class="chip chip-success">90.2%</span></td>
+            <td class="r">46</td><td class="r" style="color: #c62828; font-weight: 500;">5</td><td class="r">51</td>
+            <td class="r">36s</td><td class="r" style="color: #888;">38m ago</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- L2 Backend Health -->
@@ -497,72 +544,24 @@ td.jobCell { text-align: center; padding: 2px; }
       </table>
     </div>
 
-    <!-- L3 Backend Health -->
-    <div class="section-divider"><h3>L3 Backends (check runs on PR)</h3></div>
-    <div class="paper" style="margin-bottom: 20px;">
-      <table class="oot-table">
-        <thead>
-          <tr>
-            <th style="width: 28px;"></th>
-            <th>Backend Repository</th>
-            <th class="c">Level</th>
-            <th class="r">Pass Rate</th>
-            <th class="r">Success</th>
-            <th class="r">Failures</th>
-            <th class="r">Total</th>
-            <th class="r">Avg Duration</th>
-            <th class="r">Last Run</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
-            <td class="c"><span class="status-dot active" title="Active"></span></td>
-            <td><a href="oot-hud-mockup-crcr-backend.html">intel/intel-extension-for-pytorch</a></td>
-            <td class="c"><span class="chip chip-outlined level-l3">L3</span></td>
-            <td class="r"><span class="chip chip-success">89.6%</span></td>
-            <td class="r">43</td><td class="r" style="color: #c62828; font-weight: 500;">5</td><td class="r">48</td>
-            <td class="r">29s</td><td class="r" style="color: #888;">12m ago</td>
-          </tr>
-          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
-            <td class="c"><span class="status-dot active" title="Active"></span></td>
-            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/ascend-pytorch</a></td>
-            <td class="c"><span class="chip chip-outlined level-l3">L3</span></td>
-            <td class="r"><span class="chip chip-success">90.2%</span></td>
-            <td class="r">46</td><td class="r" style="color: #c62828; font-weight: 500;">5</td><td class="r">51</td>
-            <td class="r">36s</td><td class="r" style="color: #888;">38m ago</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- L4 Backend Health -->
-    <div class="section-divider"><h3>L4 Backends (merge-gating)</h3></div>
-    <div class="paper">
-      <table class="oot-table">
-        <thead>
-          <tr>
-            <th style="width: 28px;"></th>
-            <th>Backend Repository</th>
-            <th class="c">Level</th>
-            <th class="r">Pass Rate</th>
-            <th class="r">Success</th>
-            <th class="r">Failures</th>
-            <th class="r">Total</th>
-            <th class="r">Avg Duration</th>
-            <th class="r">Last Run</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="cursor:pointer;" onclick="window.location.href='oot-hud-mockup-crcr-backend.html'">
-            <td class="c"><span class="status-dot active" title="Active"></span></td>
-            <td><a href="oot-hud-mockup-crcr-backend.html">pytorch-labs/cambricon-pytorch</a></td>
-            <td class="c"><span class="chip chip-outlined level-l4">L4</span></td>
-            <td class="r"><span class="chip chip-success">96.1%</span></td>
-            <td class="r">49</td><td class="r" style="font-weight: 500;">2</td><td class="r">51</td>
-            <td class="r">33s</td><td class="r" style="color: #888;">5m ago</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- L1 Integrations -->
+    <div class="section-divider"><h3>L1 Integrations (webhook-only)</h3></div>
+    <div style="margin-bottom: 20px; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--dropdown-bg);">
+      <p style="font-size: 0.8rem; color: #888; margin: 0 0 8px;">These repos receive webhook notifications on new commits. No CI results are reported back.</p>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
+          <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
+          qualcomm/ai-engine-pytorch
+        </a>
+        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
+          <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
+          graphcore/poptorch
+        </a>
+        <a href="#" style="font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;">
+          <span class="chip chip-outlined level-l1" style="font-size: 0.65rem; padding: 1px 6px;">L1</span>
+          habana/habana-pytorch
+        </a>
+      </div>
     </div>
   </div>
 </div>
